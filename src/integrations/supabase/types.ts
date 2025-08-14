@@ -14,7 +14,152 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      agregados: {
+        Row: {
+          ativo: boolean | null
+          boa_conduta: boolean | null
+          capacidade_carga_m3: number | null
+          capacidade_carga_toneladas: number | null
+          categoria_cnh: string
+          contato_motorista: string | null
+          contato_proprietario: string | null
+          cor_veiculo: string | null
+          created_at: string
+          data_crlv: string | null
+          data_detizacao: string | null
+          data_inclusao: string
+          data_saida: string | null
+          data_vigilancia_sanitaria: string | null
+          escolaridade: string | null
+          estado_civil: string | null
+          id: string
+          local_pernoite: string | null
+          nome_motorista: string
+          nome_pai: string | null
+          numero_antt: string | null
+          numero_cnh: string
+          observacoes: string | null
+          pernoite: boolean | null
+          placa_veiculo: string
+          pontos_cnh: number | null
+          porta_lateral: boolean | null
+          proprietario_veiculo: string
+          quantidade_pallets: number | null
+          restricoes_rota: string | null
+          tipo_veiculo: string
+          updated_at: string
+          validade_cnh: string
+        }
+        Insert: {
+          ativo?: boolean | null
+          boa_conduta?: boolean | null
+          capacidade_carga_m3?: number | null
+          capacidade_carga_toneladas?: number | null
+          categoria_cnh: string
+          contato_motorista?: string | null
+          contato_proprietario?: string | null
+          cor_veiculo?: string | null
+          created_at?: string
+          data_crlv?: string | null
+          data_detizacao?: string | null
+          data_inclusao?: string
+          data_saida?: string | null
+          data_vigilancia_sanitaria?: string | null
+          escolaridade?: string | null
+          estado_civil?: string | null
+          id?: string
+          local_pernoite?: string | null
+          nome_motorista: string
+          nome_pai?: string | null
+          numero_antt?: string | null
+          numero_cnh: string
+          observacoes?: string | null
+          pernoite?: boolean | null
+          placa_veiculo: string
+          pontos_cnh?: number | null
+          porta_lateral?: boolean | null
+          proprietario_veiculo: string
+          quantidade_pallets?: number | null
+          restricoes_rota?: string | null
+          tipo_veiculo: string
+          updated_at?: string
+          validade_cnh: string
+        }
+        Update: {
+          ativo?: boolean | null
+          boa_conduta?: boolean | null
+          capacidade_carga_m3?: number | null
+          capacidade_carga_toneladas?: number | null
+          categoria_cnh?: string
+          contato_motorista?: string | null
+          contato_proprietario?: string | null
+          cor_veiculo?: string | null
+          created_at?: string
+          data_crlv?: string | null
+          data_detizacao?: string | null
+          data_inclusao?: string
+          data_saida?: string | null
+          data_vigilancia_sanitaria?: string | null
+          escolaridade?: string | null
+          estado_civil?: string | null
+          id?: string
+          local_pernoite?: string | null
+          nome_motorista?: string
+          nome_pai?: string | null
+          numero_antt?: string | null
+          numero_cnh?: string
+          observacoes?: string | null
+          pernoite?: boolean | null
+          placa_veiculo?: string
+          pontos_cnh?: number | null
+          porta_lateral?: boolean | null
+          proprietario_veiculo?: string
+          quantidade_pallets?: number | null
+          restricoes_rota?: string | null
+          tipo_veiculo?: string
+          updated_at?: string
+          validade_cnh?: string
+        }
+        Relationships: []
+      }
+      agregados_historico: {
+        Row: {
+          agregado_id: string
+          campo_alterado: string
+          data_alteracao: string
+          id: string
+          usuario_alteracao: string | null
+          valor_anterior: string | null
+          valor_novo: string | null
+        }
+        Insert: {
+          agregado_id: string
+          campo_alterado: string
+          data_alteracao?: string
+          id?: string
+          usuario_alteracao?: string | null
+          valor_anterior?: string | null
+          valor_novo?: string | null
+        }
+        Update: {
+          agregado_id?: string
+          campo_alterado?: string
+          data_alteracao?: string
+          id?: string
+          usuario_alteracao?: string | null
+          valor_anterior?: string | null
+          valor_novo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agregados_historico_agregado_id_fkey"
+            columns: ["agregado_id"]
+            isOneToOne: false
+            referencedRelation: "agregados"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
