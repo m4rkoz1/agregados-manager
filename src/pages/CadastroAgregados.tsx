@@ -8,9 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Save, UserPlus } from "lucide-react";
+import { useAgregados, CreateAgregadoData } from "@/hooks/useAgregados";
+import { useNavigate } from "react-router-dom";
 
 export default function CadastroAgregados() {
   const { toast } = useToast();
+  const { createAgregado } = useAgregados();
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     dataInclusao: "",
     dataSaida: "",
@@ -82,57 +87,95 @@ export default function CadastroAgregados() {
     "União Estável"
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validações básicas
-    if (!formData.placa || !formData.nomeMotorista || !formData.tipoVeiculo) {
+    if (!formData.placa || !formData.nomeMotorista || !formData.tipoVeiculo || !formData.numeroCNH) {
       toast({
         title: "Erro de validação",
-        description: "Preencha os campos obrigatórios: Placa, Nome do Motorista e Tipo de Veículo",
+        description: "Preencha os campos obrigatórios: Placa, Nome do Motorista, Tipo de Veículo e CNH",
         variant: "destructive"
       });
       return;
     }
 
-    console.log("Dados do formulário:", formData);
-    
-    toast({
-      title: "Agregado cadastrado com sucesso!",
-      description: `Motorista ${formData.nomeMotorista} - Veículo ${formData.placa}`,
-    });
+    setIsSubmitting(true);
 
-    // Reset form
-    setFormData({
-      dataInclusao: "",
-      dataSaida: "",
-      placa: "",
-      tipoVeiculo: "",
-      nomeMotorista: "",
-      contatoMotorista: "",
-      numeroCNH: "",
-      categoriaCNH: "",
-      validadeCNH: "",
-      numeroANTT: "",
-      proprietario: "",
-      contatoProprietario: "",
-      escolaridade: "",
-      estadoCivil: "",
-      corVeiculo: "",
-      nomePai: "",
-      restricoesRota: "",
-      capacidadeCarga: "",
-      portaLateral: false,
-      quantidadePallets: "",
-      pernoite: false,
-      localPernoite: "",
-      boaConduta: false,
-      pontosCNH: "",
-      dataDetizacao: "",
-      dataVigilanciaSanitaria: "",
-      dataCRLV: "",
-      observacoes: ""
-    });
+    try {
+      const agregadoData: CreateAgregadoData = {
+        data_inclusao: formData.dataInclusao || new Date().toISOString().split('T')[0],
+        data_saida: formData.dataSaida || undefined,
+        placa_veiculo: formData.placa.toUpperCase(),
+        tipo_veiculo: formData.tipoVeiculo,
+        nome_motorista: formData.nomeMotorista,
+        contato_motorista: formData.contatoMotorista || undefined,
+        numero_cnh: formData.numeroCNH,
+        categoria_cnh: formData.categoriaCNH,
+        validade_cnh: formData.validadeCNH,
+        numero_antt: formData.numeroANTT || undefined,
+        proprietario_veiculo: formData.proprietario,
+        contato_proprietario: formData.contatoProprietario || undefined,
+        escolaridade: formData.escolaridade || undefined,
+        estado_civil: formData.estadoCivil || undefined,
+        cor_veiculo: formData.corVeiculo || undefined,
+        nome_pai: formData.nomePai || undefined,
+        restricoes_rota: formData.restricoesRota || undefined,
+        capacidade_carga_toneladas: formData.capacidadeCarga ? parseFloat(formData.capacidadeCarga) : undefined,
+        porta_lateral: formData.portaLateral,
+        quantidade_pallets: formData.quantidadePallets ? parseInt(formData.quantidadePallets) : undefined,
+        pernoite: formData.pernoite,
+        local_pernoite: formData.localPernoite || undefined,
+        boa_conduta: formData.boaConduta,
+        pontos_cnh: formData.pontosCNH ? parseInt(formData.pontosCNH) : 0,
+        data_detizacao: formData.dataDetizacao || undefined,
+        data_vigilancia_sanitaria: formData.dataVigilanciaSanitaria || undefined,
+        data_crlv: formData.dataCRLV || undefined,
+        observacoes: formData.observacoes || undefined,
+        ativo: true
+      };
+
+      const success = await createAgregado(agregadoData);
+      
+      if (success) {
+        // Reset form
+        setFormData({
+          dataInclusao: "",
+          dataSaida: "",
+          placa: "",
+          tipoVeiculo: "",
+          nomeMotorista: "",
+          contatoMotorista: "",
+          numeroCNH: "",
+          categoriaCNH: "",
+          validadeCNH: "",
+          numeroANTT: "",
+          proprietario: "",
+          contatoProprietario: "",
+          escolaridade: "",
+          estadoCivil: "",
+          corVeiculo: "",
+          nomePai: "",
+          restricoesRota: "",
+          capacidadeCarga: "",
+          portaLateral: false,
+          quantidadePallets: "",
+          pernoite: false,
+          localPernoite: "",
+          boaConduta: false,
+          pontosCNH: "",
+          dataDetizacao: "",
+          dataVigilanciaSanitaria: "",
+          dataCRLV: "",
+          observacoes: ""
+        });
+        
+        // Redirecionar para a lista de frota
+        setTimeout(() => navigate('/frota'), 1500);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const updateFormData = (field: string, value: any) => {
@@ -485,12 +528,12 @@ export default function CadastroAgregados() {
         </Card>
 
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => window.history.back()}>
+          <Button type="button" variant="outline" onClick={() => navigate('/frota')} disabled={isSubmitting}>
             Cancelar
           </Button>
-          <Button type="submit" className="bg-gradient-primary hover:opacity-90">
+          <Button type="submit" className="bg-gradient-primary hover:opacity-90" disabled={isSubmitting}>
             <Save className="w-4 h-4 mr-2" />
-            Salvar Agregado
+            {isSubmitting ? 'Salvando...' : 'Salvar Agregado'}
           </Button>
         </div>
       </form>

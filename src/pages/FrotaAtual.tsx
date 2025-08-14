@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,101 +13,82 @@ import {
   Trash2,
   Truck,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  Plus
 } from "lucide-react";
-
-interface Agregado {
-  id: number;
-  placa: string;
-  motorista: string;
-  tipo: string;
-  proprietario: string;
-  contato: string;
-  validadeCNH: string;
-  validadeCRLV: string;
-  status: "ativo" | "inativo" | "pendente";
-  alertas: string[];
-}
+import { useAgregados, Agregado } from "@/hooks/useAgregados";
+import { useNavigate } from "react-router-dom";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function FrotaAtual() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
+  const { agregados, loading, deleteAgregado } = useAgregados();
+  const navigate = useNavigate();
 
-  // Dados mock para demonstração
-  const agregados: Agregado[] = [
-    {
-      id: 1,
-      placa: "ABC-1234",
-      motorista: "João Silva",
-      tipo: "Carreta",
-      proprietario: "João Silva",
-      contato: "(11) 99999-9999",
-      validadeCNH: "2025-03-15",
-      validadeCRLV: "2024-12-30",
-      status: "ativo",
-      alertas: []
-    },
-    {
-      id: 2,
-      placa: "XYZ-5678",
-      motorista: "Maria Santos",
-      tipo: "Truck",
-      proprietario: "Transportes ABC",
-      contato: "(11) 88888-8888",
-      validadeCNH: "2024-08-30",
-      validadeCRLV: "2025-01-15",
-      status: "ativo",
-      alertas: ["CNH vence em breve"]
-    },
-    {
-      id: 3,
-      placa: "DEF-9012",
-      motorista: "Carlos Oliveira",
-      tipo: "Toco",
-      proprietario: "Carlos Oliveira",
-      contato: "(11) 77777-7777",
-      validadeCNH: "2025-06-20",
-      validadeCRLV: "2024-08-10",
-      status: "inativo",
-      alertas: ["CRLV vencido"]
-    },
-    {
-      id: 4,
-      placa: "GHI-3456",
-      motorista: "Ana Costa",
-      tipo: "Van",
-      proprietario: "Ana Costa",
-      contato: "(11) 66666-6666",
-      validadeCNH: "2025-02-10",
-      validadeCRLV: "2025-04-25",
-      status: "ativo",
-      alertas: []
-    },
-    {
-      id: 5,
-      placa: "JKL-7890",
-      motorista: "Pedro Lima",
-      tipo: "3/4",
-      proprietario: "Frota União",
-      contato: "(11) 55555-5555",
-      validadeCNH: "2024-09-05",
-      validadeCRLV: "2024-11-20",
-      status: "pendente",
-      alertas: ["Documentação pendente"]
-    }
-  ];
-
-  const filteredAgregados = agregados.filter(agregado => {
-    const matchesSearch = agregado.motorista.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         agregado.placa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         agregado.proprietario.toLowerCase().includes(searchTerm.toLowerCase());
+  const getAgregadoStatus = (agregado: Agregado): "ativo" | "inativo" | "pendente" => {
+    if (!agregado.ativo) return "inativo";
     
-    const matchesType = filterType === "all" || agregado.tipo === filterType;
+    const hoje = new Date();
+    const validadeCNH = new Date(agregado.validade_cnh);
+    const validadeCRLV = agregado.data_crlv ? new Date(agregado.data_crlv) : null;
+    
+    // Se algum documento está vencido
+    if (validadeCNH < hoje || (validadeCRLV && validadeCRLV < hoje)) {
+      return "pendente";
+    }
+    
+    return "ativo";
+  };
+
+  const getAgregadoAlertas = (agregado: Agregado): string[] => {
+    const alertas: string[] = [];
+    const hoje = new Date();
+    const em30Dias = new Date(hoje.getTime() + 30 * 24 * 60 * 60 * 1000);
+    
+    const validadeCNH = new Date(agregado.validade_cnh);
+    const validadeCRLV = agregado.data_crlv ? new Date(agregado.data_crlv) : null;
+    
+    if (validadeCNH < hoje) {
+      alertas.push("CNH vencida");
+    } else if (validadeCNH <= em30Dias) {
+      alertas.push("CNH vence em breve");
+    }
+    
+    if (validadeCRLV) {
+      if (validadeCRLV < hoje) {
+        alertas.push("CRLV vencido");
+      } else if (validadeCRLV <= em30Dias) {
+        alertas.push("CRLV vence em breve");
+      }
+    }
+    
+    return alertas;
+  };
+
+  const agregadosComStatus = useMemo(() => {
+    return agregados.map(agregado => ({
+      ...agregado,
+      status: getAgregadoStatus(agregado),
+      alertas: getAgregadoAlertas(agregado)
+    }));
+  }, [agregados]);
+
+  const filteredAgregados = agregadosComStatus.filter(agregado => {
+    const matchesSearch = agregado.nome_motorista.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         agregado.placa_veiculo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         agregado.proprietario_veiculo.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesType = filterType === "all" || agregado.tipo_veiculo === filterType;
     const matchesStatus = filterStatus === "all" || agregado.status === filterStatus;
     
     return matchesSearch && matchesType && matchesStatus;
   });
+
+  const handleDelete = async (id: string) => {
+    await deleteAgregado(id);
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -150,9 +131,15 @@ export default function FrotaAtual() {
       {/* Filtros e Busca */}
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="w-5 h-5" />
-            Filtros e Busca
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Filter className="w-5 h-5" />
+              Filtros e Busca
+            </div>
+            <Button onClick={() => navigate('/cadastro')} className="bg-gradient-primary hover:opacity-90">
+              <Plus className="w-4 h-4 mr-2" />
+              Novo Agregado
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -178,6 +165,8 @@ export default function FrotaAtual() {
                 <SelectItem value="Toco">Toco</SelectItem>
                 <SelectItem value="Van">Van</SelectItem>
                 <SelectItem value="3/4">3/4</SelectItem>
+                <SelectItem value="Bitrem">Bitrem</SelectItem>
+                <SelectItem value="Rodotrem">Rodotrem</SelectItem>
               </SelectContent>
             </Select>
 
@@ -207,72 +196,106 @@ export default function FrotaAtual() {
           <CardTitle>Agregados Cadastrados ({filteredAgregados.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {filteredAgregados.map((agregado) => (
-              <div
-                key={agregado.id}
-                className="border border-border rounded-lg p-4 hover:shadow-card transition-shadow"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    {getStatusIcon(agregado.status)}
-                    <div>
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className="font-semibold text-foreground">{agregado.motorista}</h3>
-                        {getStatusBadge(agregado.status)}
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="text-muted-foreground mt-2">Carregando agregados...</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredAgregados.map((agregado) => (
+                <div
+                  key={agregado.id}
+                  className="border border-border rounded-lg p-4 hover:shadow-card transition-shadow"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      {getStatusIcon(agregado.status)}
+                      <div>
+                        <div className="flex items-center gap-3 mb-1">
+                          <h3 className="font-semibold text-foreground">{agregado.nome_motorista}</h3>
+                          {getStatusBadge(agregado.status)}
+                          {agregado.alertas.length > 0 && (
+                            <Badge variant="outline" className="text-warning border-warning">
+                              {agregado.alertas.length} alerta(s)
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
+                          <div>
+                            <span className="font-medium">Placa:</span> {agregado.placa_veiculo}
+                          </div>
+                          <div>
+                            <span className="font-medium">Tipo:</span> {agregado.tipo_veiculo}
+                          </div>
+                          <div>
+                            <span className="font-medium">Proprietário:</span> {agregado.proprietario_veiculo}
+                          </div>
+                          <div>
+                            <span className="font-medium">Contato:</span> {agregado.contato_motorista || agregado.contato_proprietario || 'N/A'}
+                          </div>
+                        </div>
                         {agregado.alertas.length > 0 && (
-                          <Badge variant="outline" className="text-warning border-warning">
-                            {agregado.alertas.length} alerta(s)
-                          </Badge>
+                          <div className="mt-2">
+                            {agregado.alertas.map((alerta, index) => (
+                              <div key={index} className="text-sm text-warning flex items-center gap-1">
+                                <AlertTriangle className="w-3 h-3" />
+                                {alerta}
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
-                        <div>
-                          <span className="font-medium">Placa:</span> {agregado.placa}
-                        </div>
-                        <div>
-                          <span className="font-medium">Tipo:</span> {agregado.tipo}
-                        </div>
-                        <div>
-                          <span className="font-medium">Proprietário:</span> {agregado.proprietario}
-                        </div>
-                        <div>
-                          <span className="font-medium">Contato:</span> {agregado.contato}
-                        </div>
-                      </div>
-                      {agregado.alertas.length > 0 && (
-                        <div className="mt-2">
-                          {agregado.alertas.map((alerta, index) => (
-                            <div key={index} className="text-sm text-warning flex items-center gap-1">
-                              <AlertTriangle className="w-3 h-3" />
-                              {alerta}
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Tem certeza que deseja excluir o agregado de {agregado.nome_motorista}? 
+                              Esta ação não pode ser desfeita.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => handleDelete(agregado.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Excluir
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
-          {filteredAgregados.length === 0 && (
+          {!loading && filteredAgregados.length === 0 && (
             <div className="text-center py-8">
               <Truck className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">Nenhum agregado encontrado com os filtros aplicados.</p>
+              <p className="text-muted-foreground">
+                {agregados.length === 0 
+                  ? "Nenhum agregado cadastrado. Clique em 'Novo Agregado' para começar."
+                  : "Nenhum agregado encontrado com os filtros aplicados."
+                }
+              </p>
             </div>
           )}
         </CardContent>

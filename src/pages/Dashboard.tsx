@@ -1,5 +1,7 @@
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { AlertsSection } from "@/components/dashboard/AlertsSection";
+import { useAgregados } from "@/hooks/useAgregados";
+import { useMemo } from "react";
 import { 
   Users, 
   Truck, 
@@ -10,53 +12,111 @@ import {
 } from "lucide-react";
 
 export default function Dashboard() {
-  const stats = [
-    {
-      title: "Total de Agregados",
-      value: 142,
-      description: "Cadastrados no sistema",
-      icon: Users,
-      variant: "default" as const
-    },
-    {
-      title: "Agregados Ativos",
-      value: 118,
-      description: "Em operação",
-      icon: CheckCircle,
-      variant: "success" as const,
-      trend: { value: 5, isPositive: true }
-    },
-    {
-      title: "Agregados Inativos",
-      value: 24,
-      description: "Fora de operação",
-      icon: XCircle,
-      variant: "destructive" as const,
-      trend: { value: 2, isPositive: false }
-    },
-    {
-      title: "Documentos Vencendo",
-      value: 8,
-      description: "Próximos 30 dias",
-      icon: AlertTriangle,
-      variant: "warning" as const
-    },
-    {
-      title: "Frota Total",
-      value: 89,
-      description: "Veículos cadastrados",
-      icon: Truck,
-      variant: "default" as const
-    },
-    {
-      title: "Esporádicos do Mês",
-      value: 12,
-      description: "Agosto 2024",
-      icon: Calendar,
-      variant: "default" as const,
-      trend: { value: 8, isPositive: true }
+  const { agregados, getAgregadosAtivos, getAgregadosInativos, getAgregadosComAlerta, loading } = useAgregados();
+
+  const stats = useMemo(() => {
+    if (loading) {
+      return [
+        {
+          title: "Total de Agregados",
+          value: "...",
+          description: "Carregando...",
+          icon: Users,
+          variant: "default" as const
+        },
+        {
+          title: "Agregados Ativos",
+          value: "...",
+          description: "Carregando...",
+          icon: CheckCircle,
+          variant: "success" as const
+        },
+        {
+          title: "Agregados Inativos",
+          value: "...",
+          description: "Carregando...",
+          icon: XCircle,
+          variant: "destructive" as const
+        },
+        {
+          title: "Documentos Vencendo",
+          value: "...",
+          description: "Carregando...",
+          icon: AlertTriangle,
+          variant: "warning" as const
+        },
+        {
+          title: "Frota Total",
+          value: "...",
+          description: "Carregando...",
+          icon: Truck,
+          variant: "default" as const
+        },
+        {
+          title: "Esporádicos do Mês",
+          value: "...",
+          description: "Carregando...",
+          icon: Calendar,
+          variant: "default" as const
+        }
+      ];
     }
-  ];
+
+    const totalAgregados = agregados.length;
+    const agregadosAtivos = getAgregadosAtivos();
+    const agregadosInativos = getAgregadosInativos();
+    const documentosVencendo = getAgregadosComAlerta();
+    
+    const currentMonth = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+
+    return [
+      {
+        title: "Total de Agregados",
+        value: totalAgregados,
+        description: "Cadastrados no sistema",
+        icon: Users,
+        variant: "default" as const
+      },
+      {
+        title: "Agregados Ativos",
+        value: agregadosAtivos.length,
+        description: "Em operação",
+        icon: CheckCircle,
+        variant: "success" as const,
+        trend: { value: Math.round((agregadosAtivos.length / totalAgregados) * 100), isPositive: true }
+      },
+      {
+        title: "Agregados Inativos",
+        value: agregadosInativos.length,
+        description: "Fora de operação",
+        icon: XCircle,
+        variant: "destructive" as const,
+        trend: { value: Math.round((agregadosInativos.length / totalAgregados) * 100), isPositive: false }
+      },
+      {
+        title: "Documentos Vencendo",
+        value: documentosVencendo.length,
+        description: "Próximos 30 dias",
+        icon: AlertTriangle,
+        variant: "warning" as const
+      },
+      {
+        title: "Frota Total",
+        value: totalAgregados,
+        description: "Veículos cadastrados",
+        icon: Truck,
+        variant: "default" as const
+      },
+      {
+        title: "Esporádicos do Mês",
+        value: 0,
+        description: currentMonth,
+        icon: Calendar,
+        variant: "default" as const,
+        trend: { value: 0, isPositive: true }
+      }
+    ];
+  }, [agregados, getAgregadosAtivos, getAgregadosInativos, getAgregadosComAlerta, loading]);
 
   return (
     <div className="space-y-6">
