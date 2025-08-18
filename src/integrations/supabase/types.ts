@@ -24,18 +24,23 @@ export type Database = {
           contato_motorista: string | null
           contato_proprietario: string | null
           cor_veiculo: string | null
+          cpf_proprietario: string | null
           created_at: string
           data_crlv: string | null
           data_detizacao: string | null
           data_inclusao: string
           data_saida: string | null
           data_vigilancia_sanitaria: string | null
+          endereco_proprietario: string | null
           escolaridade: string | null
+          escolaridade_proprietario: string | null
           estado_civil: string | null
+          estado_civil_proprietario: string | null
           id: string
           local_pernoite: string | null
           nome_motorista: string
           nome_pai: string | null
+          nome_pai_proprietario: string | null
           numero_antt: string | null
           numero_cnh: string
           observacoes: string | null
@@ -46,6 +51,7 @@ export type Database = {
           proprietario_veiculo: string
           quantidade_pallets: number | null
           restricoes_rota: string | null
+          rg_proprietario: string | null
           tipo_veiculo: string
           updated_at: string
           validade_cnh: string
@@ -59,18 +65,23 @@ export type Database = {
           contato_motorista?: string | null
           contato_proprietario?: string | null
           cor_veiculo?: string | null
+          cpf_proprietario?: string | null
           created_at?: string
           data_crlv?: string | null
           data_detizacao?: string | null
           data_inclusao?: string
           data_saida?: string | null
           data_vigilancia_sanitaria?: string | null
+          endereco_proprietario?: string | null
           escolaridade?: string | null
+          escolaridade_proprietario?: string | null
           estado_civil?: string | null
+          estado_civil_proprietario?: string | null
           id?: string
           local_pernoite?: string | null
           nome_motorista: string
           nome_pai?: string | null
+          nome_pai_proprietario?: string | null
           numero_antt?: string | null
           numero_cnh: string
           observacoes?: string | null
@@ -81,6 +92,7 @@ export type Database = {
           proprietario_veiculo: string
           quantidade_pallets?: number | null
           restricoes_rota?: string | null
+          rg_proprietario?: string | null
           tipo_veiculo: string
           updated_at?: string
           validade_cnh: string
@@ -94,18 +106,23 @@ export type Database = {
           contato_motorista?: string | null
           contato_proprietario?: string | null
           cor_veiculo?: string | null
+          cpf_proprietario?: string | null
           created_at?: string
           data_crlv?: string | null
           data_detizacao?: string | null
           data_inclusao?: string
           data_saida?: string | null
           data_vigilancia_sanitaria?: string | null
+          endereco_proprietario?: string | null
           escolaridade?: string | null
+          escolaridade_proprietario?: string | null
           estado_civil?: string | null
+          estado_civil_proprietario?: string | null
           id?: string
           local_pernoite?: string | null
           nome_motorista?: string
           nome_pai?: string | null
+          nome_pai_proprietario?: string | null
           numero_antt?: string | null
           numero_cnh?: string
           observacoes?: string | null
@@ -116,6 +133,7 @@ export type Database = {
           proprietario_veiculo?: string
           quantidade_pallets?: number | null
           restricoes_rota?: string | null
+          rg_proprietario?: string | null
           tipo_veiculo?: string
           updated_at?: string
           validade_cnh?: string

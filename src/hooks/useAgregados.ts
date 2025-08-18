@@ -16,6 +16,12 @@ export interface Agregado {
   numero_antt?: string;
   proprietario_veiculo: string;
   contato_proprietario?: string;
+  cpf_proprietario?: string;
+  rg_proprietario?: string;
+  endereco_proprietario?: string;
+  escolaridade_proprietario?: string;
+  estado_civil_proprietario?: string;
+  nome_pai_proprietario?: string;
   escolaridade?: string;
   estado_civil?: string;
   cor_veiculo?: string;
@@ -51,6 +57,12 @@ export interface CreateAgregadoData {
   numero_antt?: string;
   proprietario_veiculo: string;
   contato_proprietario?: string;
+  cpf_proprietario?: string;
+  rg_proprietario?: string;
+  endereco_proprietario?: string;
+  escolaridade_proprietario?: string;
+  estado_civil_proprietario?: string;
+  nome_pai_proprietario?: string;
   escolaridade?: string;
   estado_civil?: string;
   cor_veiculo?: string;
