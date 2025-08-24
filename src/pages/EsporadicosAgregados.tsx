@@ -8,12 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Clock } from "lucide-react";
-import { useAgregados, CreateAgregadoData } from "@/hooks/useAgregados";
+import { useEsporadicosAgregados, CreateEsporadicoAgregadoData } from "@/hooks/useEsporadicosAgregados";
 import { useNavigate } from "react-router-dom";
 
 export default function EsporadicosAgregados() {
   const { toast } = useToast();
-  const { createAgregado } = useAgregados();
+  const { createEsporadico } = useEsporadicosAgregados();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -110,7 +110,7 @@ export default function EsporadicosAgregados() {
     setIsSubmitting(true);
 
     try {
-      const agregadoData: CreateAgregadoData = {
+      const esporadicoData: CreateEsporadicoAgregadoData = {
         data_inclusao: formData.dataInclusao || new Date().toISOString().split('T')[0],
         data_saida: formData.dataSaida,
         placa_veiculo: formData.placa.toUpperCase(),
@@ -149,7 +149,7 @@ export default function EsporadicosAgregados() {
         ativo: true
       };
 
-      const success = await createAgregado(agregadoData);
+      const success = await createEsporadico(esporadicoData);
       
       if (success) {
         toast({

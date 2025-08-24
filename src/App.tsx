@@ -9,6 +9,7 @@ import CadastroAgregados from "./pages/CadastroAgregados";
 import FrotaAtual from "./pages/FrotaAtual";
 import EsporadicosAgregados from "./pages/EsporadicosAgregados";
 import Relatorios from "./pages/Relatorios";
+import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,7 +27,7 @@ const App = () => (
             <Route path="/frota" element={<FrotaAtual />} />
             <Route path="/esporadicos" element={<EsporadicosAgregados />} />
             <Route path="/relatorios" element={<Relatorios />} />
-            <Route path="/configuracoes" element={<div className="p-8 text-center text-muted-foreground">Página em desenvolvimento</div>} />
+            <Route path="/configuracoes" element={<Configuracoes />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
