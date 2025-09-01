@@ -8,12 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Clock } from "lucide-react";
-import { useAgregados, CreateAgregadoData } from "@/hooks/useAgregados";
+import { useEsporadicosAgregados, CreateEsporadicoData } from "@/hooks/useEsporadicosAgregados";
 import { useNavigate } from "react-router-dom";
 
 export default function EsporadicosAgregados() {
   const { toast } = useToast();
-  const { createAgregado } = useAgregados();
+  const { createEsporadico } = useEsporadicosAgregados();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -35,19 +35,21 @@ export default function EsporadicosAgregados() {
     escolaridadeProprietario: "",
     estadoCivilProprietario: "",
     nomePaiProprietario: "",
-    escolaridade: "",
-    estadoCivil: "",
+    pisProprietario: "",
+    ressalvaProprietario: "",
+    nomeReferenciaProprietario: "",
+    contatoReferenciaProprietario: "",
+    ressalvaMotorista: "",
+    nomeReferenciaMotorista: "",
+    contatoReferenciaMotorista: "",
     corVeiculo: "",
-    nomePai: "",
     restricoesRota: "",
-    capacidadeCarga: "",
-    capacidadeCargaM3: "",
-    portaLateral: false,
-    quantidadePallets: "",
+    quantidadePaleteOperacional: "",
+    capacidadeCargaOperacional: "",
     pernoite: false,
-    localPernoite: "",
     boaConduta: false,
-    pontosCNH: "",
+    viagem: false,
+    rastreador: false,
     dataDetizacao: "",
     dataVigilanciaSanitaria: "",
     dataCRLV: "",
@@ -56,16 +58,27 @@ export default function EsporadicosAgregados() {
 
   const tiposVeiculo = [
     "3/4",
-    "Toco",
-    "Truck", 
+    "Toco", 
+    "Truck",
     "Carreta",
     "Van",
     "Bitrem",
-    "Rodotrem"
+    "Rodotrem",
+    "Bongo",
+    "Cargovan",
+    "Fiorino"
   ];
 
   const categoriasCNH = [
-    "A", "B", "C", "D", "E", "AB", "AC", "AD", "AE"
+    "A",
+    "B", 
+    "C",
+    "D",
+    "E",
+    "AB",
+    "AC", 
+    "AD",
+    "AE"
   ];
 
   const escolaridades = [
@@ -89,19 +102,11 @@ export default function EsporadicosAgregados() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.placa || !formData.nomeMotorista || !formData.tipoVeiculo || !formData.numeroCNH) {
+    // Validações básicas
+    if (!formData.placa || !formData.nomeMotorista || !formData.tipoVeiculo || !formData.numeroCNH || !formData.dataInclusao || !formData.dataSaida) {
       toast({
         title: "Erro de validação",
-        description: "Preencha os campos obrigatórios: Placa, Nome do Motorista, Tipo de Veículo e CNH",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!formData.dataSaida) {
-      toast({
-        title: "Erro de validação",
-        description: "Para agregados esporádicos, a data de saída é obrigatória",
+        description: "Preencha os campos obrigatórios: Placa, Nome do Motorista, Tipo de Veículo, CNH, Data de Inclusão e Data de Saída",
         variant: "destructive"
       });
       return;
@@ -110,8 +115,8 @@ export default function EsporadicosAgregados() {
     setIsSubmitting(true);
 
     try {
-      const agregadoData: CreateAgregadoData = {
-        data_inclusao: formData.dataInclusao || new Date().toISOString().split('T')[0],
+      const esporadicoData: CreateEsporadicoData = {
+        data_inclusao: formData.dataInclusao,
         data_saida: formData.dataSaida,
         placa_veiculo: formData.placa.toUpperCase(),
         tipo_veiculo: formData.tipoVeiculo,
@@ -129,19 +134,21 @@ export default function EsporadicosAgregados() {
         escolaridade_proprietario: formData.escolaridadeProprietario || undefined,
         estado_civil_proprietario: formData.estadoCivilProprietario || undefined,
         nome_pai_proprietario: formData.nomePaiProprietario || undefined,
-        escolaridade: formData.escolaridade || undefined,
-        estado_civil: formData.estadoCivil || undefined,
+        pis_proprietario: formData.pisProprietario || undefined,
+        ressalva_proprietario: formData.ressalvaProprietario || undefined,
+        nome_referencia_proprietario: formData.nomeReferenciaProprietario || undefined,
+        contato_referencia_proprietario: formData.contatoReferenciaProprietario || undefined,
+        ressalva_motorista: formData.ressalvaMotorista || undefined,
+        nome_referencia_motorista: formData.nomeReferenciaMotorista || undefined,
+        contato_referencia_motorista: formData.contatoReferenciaMotorista || undefined,
         cor_veiculo: formData.corVeiculo || undefined,
-        nome_pai: formData.nomePai || undefined,
         restricoes_rota: formData.restricoesRota || undefined,
-        capacidade_carga_toneladas: formData.capacidadeCarga ? parseFloat(formData.capacidadeCarga) : undefined,
-        capacidade_carga_m3: formData.capacidadeCargaM3 ? parseFloat(formData.capacidadeCargaM3) : undefined,
-        porta_lateral: formData.portaLateral,
-        quantidade_pallets: formData.quantidadePallets ? parseInt(formData.quantidadePallets) : undefined,
+        quantidade_palete_operacional: formData.quantidadePaleteOperacional ? parseInt(formData.quantidadePaleteOperacional) : undefined,
+        capacidade_carga_operacional: formData.capacidadeCargaOperacional ? parseFloat(formData.capacidadeCargaOperacional) : undefined,
         pernoite: formData.pernoite,
-        local_pernoite: formData.localPernoite || undefined,
         boa_conduta: formData.boaConduta,
-        pontos_cnh: formData.pontosCNH ? parseInt(formData.pontosCNH) : 0,
+        viagem: formData.viagem,
+        rastreador: formData.rastreador,
         data_detizacao: formData.dataDetizacao || undefined,
         data_vigilancia_sanitaria: formData.dataVigilanciaSanitaria || undefined,
         data_crlv: formData.dataCRLV || undefined,
@@ -149,14 +156,51 @@ export default function EsporadicosAgregados() {
         ativo: true
       };
 
-      const success = await createAgregado(agregadoData);
+      const success = await createEsporadico(esporadicoData);
       
       if (success) {
-        toast({
-          title: "Agregado esporádico cadastrado!",
-          description: `${formData.nomeMotorista} - ${formData.placa} (Período: ${formData.dataInclusao} até ${formData.dataSaida})`
+        // Reset form
+        setFormData({
+          dataInclusao: "",
+          dataSaida: "",
+          placa: "",
+          tipoVeiculo: "",
+          nomeMotorista: "",
+          contatoMotorista: "",
+          numeroCNH: "",
+          categoriaCNH: "",
+          validadeCNH: "",
+          numeroANTT: "",
+          proprietario: "",
+          contatoProprietario: "",
+          cpfProprietario: "",
+          rgProprietario: "",
+          enderecoProprietario: "",
+          escolaridadeProprietario: "",
+          estadoCivilProprietario: "",
+          nomePaiProprietario: "",
+          pisProprietario: "",
+          ressalvaProprietario: "",
+          nomeReferenciaProprietario: "",
+          contatoReferenciaProprietario: "",
+          ressalvaMotorista: "",
+          nomeReferenciaMotorista: "",
+          contatoReferenciaMotorista: "",
+          corVeiculo: "",
+          restricoesRota: "",
+          quantidadePaleteOperacional: "",
+          capacidadeCargaOperacional: "",
+          pernoite: false,
+          boaConduta: false,
+          viagem: false,
+          rastreador: false,
+          dataDetizacao: "",
+          dataVigilanciaSanitaria: "",
+          dataCRLV: "",
+          observacoes: ""
         });
         
+        // Redirecionar para a lista de frota
         setTimeout(() => navigate('/frota'), 1500);
       }
     } finally {
@@ -173,10 +217,10 @@ export default function EsporadicosAgregados() {
       <div>
         <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-3">
           <Clock className="w-8 h-8 text-primary" />
-          Agregados Esporádicos
+          Cadastro de Agregados Esporádicos
         </h1>
         <p className="text-muted-foreground">
-          Cadastro de agregados temporários com período definido de participação na frota
+          Cadastre agregados com período específico de atuação na frota Giannone Transportes
         </p>
       </div>
 
@@ -251,41 +295,6 @@ export default function EsporadicosAgregados() {
                 onChange={(e) => updateFormData("corVeiculo", e.target.value)}
               />
             </div>
-
-            <div>
-              <Label htmlFor="capacidadeCarga">Capacidade de Carga (ton)</Label>
-              <Input
-                id="capacidadeCarga"
-                type="number"
-                step="0.1"
-                placeholder="15.5"
-                value={formData.capacidadeCarga}
-                onChange={(e) => updateFormData("capacidadeCarga", e.target.value)}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="capacidadeCargaM3">Capacidade de Carga (m³)</Label>
-              <Input
-                id="capacidadeCargaM3"
-                type="number"
-                step="0.1"
-                placeholder="50.0"
-                value={formData.capacidadeCargaM3}
-                onChange={(e) => updateFormData("capacidadeCargaM3", e.target.value)}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="quantidadePallets">Quantidade de Pallets</Label>
-              <Input
-                id="quantidadePallets"
-                type="number"
-                placeholder="24"
-                value={formData.quantidadePallets}
-                onChange={(e) => updateFormData("quantidadePallets", e.target.value)}
-              />
-            </div>
           </CardContent>
         </Card>
 
@@ -317,18 +326,17 @@ export default function EsporadicosAgregados() {
             </div>
 
             <div>
-              <Label htmlFor="numeroCNH">Número da CNH *</Label>
+              <Label htmlFor="numeroCNH">Número da CNH</Label>
               <Input
                 id="numeroCNH"
                 placeholder="12345678901"
                 value={formData.numeroCNH}
                 onChange={(e) => updateFormData("numeroCNH", e.target.value)}
-                required
               />
             </div>
 
             <div>
-              <Label htmlFor="categoriaCNH">Categoria da CNH *</Label>
+              <Label htmlFor="categoriaCNH">Categoria da CNH</Label>
               <Select value={formData.categoriaCNH} onValueChange={(value) => updateFormData("categoriaCNH", value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione a categoria" />
@@ -342,62 +350,43 @@ export default function EsporadicosAgregados() {
             </div>
 
             <div>
-              <Label htmlFor="validadeCNH">Validade da CNH *</Label>
+              <Label htmlFor="validadeCNH">Validade da CNH</Label>
               <Input
                 id="validadeCNH"
                 type="date"
                 value={formData.validadeCNH}
                 onChange={(e) => updateFormData("validadeCNH", e.target.value)}
-                required
               />
             </div>
 
             <div>
-              <Label htmlFor="pontosCNH">Pontos na CNH</Label>
+              <Label htmlFor="nomeReferenciaMotorista">Nome de Referência</Label>
               <Input
-                id="pontosCNH"
-                type="number"
-                placeholder="0"
-                value={formData.pontosCNH}
-                onChange={(e) => updateFormData("pontosCNH", e.target.value)}
+                id="nomeReferenciaMotorista"
+                placeholder="Nome da referência"
+                value={formData.nomeReferenciaMotorista}
+                onChange={(e) => updateFormData("nomeReferenciaMotorista", e.target.value)}
               />
             </div>
 
             <div>
-              <Label htmlFor="escolaridade">Escolaridade</Label>
-              <Select value={formData.escolaridade} onValueChange={(value) => updateFormData("escolaridade", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione a escolaridade" />
-                </SelectTrigger>
-                <SelectContent>
-                  {escolaridades.map((escolaridade) => (
-                    <SelectItem key={escolaridade} value={escolaridade}>{escolaridade}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="estadoCivil">Estado Civil</Label>
-              <Select value={formData.estadoCivil} onValueChange={(value) => updateFormData("estadoCivil", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o estado civil" />
-                </SelectTrigger>
-                <SelectContent>
-                  {estadosCivis.map((estado) => (
-                    <SelectItem key={estado} value={estado}>{estado}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="nomePai">Nome do Pai</Label>
+              <Label htmlFor="contatoReferenciaMotorista">Contato de Referência</Label>
               <Input
-                id="nomePai"
-                placeholder="Nome do pai"
-                value={formData.nomePai}
-                onChange={(e) => updateFormData("nomePai", e.target.value)}
+                id="contatoReferenciaMotorista"
+                placeholder="(11) 99999-9999"
+                value={formData.contatoReferenciaMotorista}
+                onChange={(e) => updateFormData("contatoReferenciaMotorista", e.target.value)}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <Label htmlFor="ressalvaMotorista">Ressalva (Histórico Motorista)</Label>
+              <Textarea
+                id="ressalvaMotorista"
+                placeholder="Informações sobre o histórico do motorista"
+                value={formData.ressalvaMotorista}
+                onChange={(e) => updateFormData("ressalvaMotorista", e.target.value)}
+                rows={3}
               />
             </div>
           </CardContent>
@@ -410,13 +399,12 @@ export default function EsporadicosAgregados() {
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="proprietario">Nome do Proprietário *</Label>
+              <Label htmlFor="proprietario">Nome do Proprietário</Label>
               <Input
                 id="proprietario"
                 placeholder="Nome completo"
                 value={formData.proprietario}
                 onChange={(e) => updateFormData("proprietario", e.target.value)}
-                required
               />
             </div>
 
@@ -447,6 +435,16 @@ export default function EsporadicosAgregados() {
                 placeholder="00.000.000-0"
                 value={formData.rgProprietario}
                 onChange={(e) => updateFormData("rgProprietario", e.target.value)}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="pisProprietario">PIS do Proprietário</Label>
+              <Input
+                id="pisProprietario"
+                placeholder="000.00000.00-0"
+                value={formData.pisProprietario}
+                onChange={(e) => updateFormData("pisProprietario", e.target.value)}
               />
             </div>
 
@@ -488,6 +486,26 @@ export default function EsporadicosAgregados() {
               />
             </div>
 
+            <div>
+              <Label htmlFor="nomeReferenciaProprietario">Nome de Referência</Label>
+              <Input
+                id="nomeReferenciaProprietario"
+                placeholder="Nome da referência"
+                value={formData.nomeReferenciaProprietario}
+                onChange={(e) => updateFormData("nomeReferenciaProprietario", e.target.value)}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="contatoReferenciaProprietario">Contato de Referência</Label>
+              <Input
+                id="contatoReferenciaProprietario"
+                placeholder="(11) 99999-9999"
+                value={formData.contatoReferenciaProprietario}
+                onChange={(e) => updateFormData("contatoReferenciaProprietario", e.target.value)}
+              />
+            </div>
+
             <div className="md:col-span-2">
               <Label htmlFor="enderecoProprietario">Endereço do Proprietário</Label>
               <Textarea
@@ -497,10 +515,21 @@ export default function EsporadicosAgregados() {
                 onChange={(e) => updateFormData("enderecoProprietario", e.target.value)}
               />
             </div>
+
+            <div className="md:col-span-2">
+              <Label htmlFor="ressalvaProprietario">Ressalva (Histórico Proprietário)</Label>
+              <Textarea
+                id="ressalvaProprietario"
+                placeholder="Informações sobre o histórico do proprietário"
+                value={formData.ressalvaProprietario}
+                onChange={(e) => updateFormData("ressalvaProprietario", e.target.value)}
+                rows={3}
+              />
+            </div>
           </CardContent>
         </Card>
 
-        {/* Documentos e Certificações */}
+        {/* Documentos e Datas */}
         <Card className="shadow-card">
           <CardHeader>
             <CardTitle>Documentos e Certificações</CardTitle>
@@ -556,34 +585,56 @@ export default function EsporadicosAgregados() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="restricoesRota">Restrições de Rota</Label>
-                <Textarea
-                  id="restricoesRota"
-                  placeholder="Descreva as restrições de rota, se houver"
-                  value={formData.restricoesRota}
-                  onChange={(e) => updateFormData("restricoesRota", e.target.value)}
+                <Label htmlFor="quantidadePaleteOperacional">Quantidade de Palete</Label>
+                <Input
+                  id="quantidadePaleteOperacional"
+                  type="number"
+                  placeholder="Ex: 24"
+                  value={formData.quantidadePaleteOperacional}
+                  onChange={(e) => updateFormData("quantidadePaleteOperacional", e.target.value)}
                 />
               </div>
 
               <div>
-                <Label htmlFor="localPernoite">Local de Pernoite</Label>
+                <Label htmlFor="capacidadeCargaOperacional">Capacidade de Carga</Label>
                 <Input
-                  id="localPernoite"
-                  placeholder="Local onde o motorista pernoita"
-                  value={formData.localPernoite}
-                  onChange={(e) => updateFormData("localPernoite", e.target.value)}
+                  id="capacidadeCargaOperacional"
+                  type="number"
+                  step="0.01"
+                  placeholder="Ex: 15.5"
+                  value={formData.capacidadeCargaOperacional}
+                  onChange={(e) => updateFormData("capacidadeCargaOperacional", e.target.value)}
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <Label htmlFor="restricoesRota">Restrições de Rota</Label>
+              <Textarea
+                id="restricoesRota"
+                placeholder="Descreva as restrições de rota, se houver"
+                value={formData.restricoesRota}
+                onChange={(e) => updateFormData("restricoesRota", e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="flex items-center space-x-2">
                 <Switch
-                  id="portaLateral"
-                  checked={formData.portaLateral}
-                  onCheckedChange={(checked) => updateFormData("portaLateral", checked)}
+                  id="viagem"
+                  checked={formData.viagem}
+                  onCheckedChange={(checked) => updateFormData("viagem", checked)}
                 />
-                <Label htmlFor="portaLateral">Possui Porta Lateral</Label>
+                <Label htmlFor="viagem">Viagem</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="rastreador"
+                  checked={formData.rastreador}
+                  onCheckedChange={(checked) => updateFormData("rastreador", checked)}
+                />
+                <Label htmlFor="rastreador">Rastreador</Label>
               </div>
 
               <div className="flex items-center space-x-2">
@@ -601,34 +652,30 @@ export default function EsporadicosAgregados() {
                   checked={formData.boaConduta}
                   onCheckedChange={(checked) => updateFormData("boaConduta", checked)}
                 />
-                <Label htmlFor="boaConduta">Certificado de Boa Conduta</Label>
+                <Label htmlFor="boaConduta">Boa Conduta</Label>
               </div>
             </div>
 
             <div>
-              <Label htmlFor="observacoes">Observações</Label>
+              <Label htmlFor="observacoes">Observações Gerais</Label>
               <Textarea
                 id="observacoes"
-                placeholder="Observações adicionais sobre o agregado esporádico"
+                placeholder="Informações adicionais sobre o agregado esporádico"
                 value={formData.observacoes}
                 onChange={(e) => updateFormData("observacoes", e.target.value)}
+                rows={3}
               />
             </div>
           </CardContent>
         </Card>
 
-        {/* Botões de Ação */}
-        <div className="flex gap-4 justify-end">
-          <Button type="button" variant="outline" onClick={() => navigate('/frota')}>
+        <div className="flex justify-end gap-4">
+          <Button type="button" variant="outline" onClick={() => navigate('/frota')} disabled={isSubmitting}>
             Cancelar
           </Button>
-          <Button 
-            type="submit" 
-            disabled={isSubmitting}
-            className="bg-gradient-primary hover:opacity-90"
-          >
+          <Button type="submit" className="bg-gradient-primary hover:opacity-90" disabled={isSubmitting}>
             <Save className="w-4 h-4 mr-2" />
-            {isSubmitting ? "Salvando..." : "Salvar Agregado Esporádico"}
+            {isSubmitting ? 'Salvando...' : 'Salvar Agregado Esporádico'}
           </Button>
         </div>
       </form>

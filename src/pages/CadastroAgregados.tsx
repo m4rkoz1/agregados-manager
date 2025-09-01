@@ -35,18 +35,21 @@ export default function CadastroAgregados() {
     escolaridadeProprietario: "",
     estadoCivilProprietario: "",
     nomePaiProprietario: "",
-    escolaridade: "",
-    estadoCivil: "",
+    pisProprietario: "",
+    ressalvaProprietario: "",
+    nomeReferenciaProprietario: "",
+    contatoReferenciaProprietario: "",
+    ressalvaMotorista: "",
+    nomeReferenciaMotorista: "",
+    contatoReferenciaMotorista: "",
     corVeiculo: "",
-    nomePai: "",
     restricoesRota: "",
-    capacidadeCarga: "",
-    portaLateral: false,
-    quantidadePallets: "",
+    quantidadePaleteOperacional: "",
+    capacidadeCargaOperacional: "",
     pernoite: false,
-    localPernoite: "",
     boaConduta: false,
-    pontosCNH: "",
+    viagem: false,
+    rastreador: false,
     dataDetizacao: "",
     dataVigilanciaSanitaria: "",
     dataCRLV: "",
@@ -55,12 +58,15 @@ export default function CadastroAgregados() {
 
   const tiposVeiculo = [
     "3/4",
-    "Toco",
+    "Toco", 
     "Truck",
     "Carreta",
     "Van",
     "Bitrem",
-    "Rodotrem"
+    "Rodotrem",
+    "Bongo",
+    "Cargovan",
+    "Fiorino"
   ];
 
   const categoriasCNH = [
@@ -128,18 +134,21 @@ export default function CadastroAgregados() {
         escolaridade_proprietario: formData.escolaridadeProprietario || undefined,
         estado_civil_proprietario: formData.estadoCivilProprietario || undefined,
         nome_pai_proprietario: formData.nomePaiProprietario || undefined,
-        escolaridade: formData.escolaridade || undefined,
-        estado_civil: formData.estadoCivil || undefined,
+        pis_proprietario: formData.pisProprietario || undefined,
+        ressalva_proprietario: formData.ressalvaProprietario || undefined,
+        nome_referencia_proprietario: formData.nomeReferenciaProprietario || undefined,
+        contato_referencia_proprietario: formData.contatoReferenciaProprietario || undefined,
+        ressalva_motorista: formData.ressalvaMotorista || undefined,
+        nome_referencia_motorista: formData.nomeReferenciaMotorista || undefined,
+        contato_referencia_motorista: formData.contatoReferenciaMotorista || undefined,
         cor_veiculo: formData.corVeiculo || undefined,
-        nome_pai: formData.nomePai || undefined,
         restricoes_rota: formData.restricoesRota || undefined,
-        capacidade_carga_toneladas: formData.capacidadeCarga ? parseFloat(formData.capacidadeCarga) : undefined,
-        porta_lateral: formData.portaLateral,
-        quantidade_pallets: formData.quantidadePallets ? parseInt(formData.quantidadePallets) : undefined,
+        quantidade_palete_operacional: formData.quantidadePaleteOperacional ? parseInt(formData.quantidadePaleteOperacional) : undefined,
+        capacidade_carga_operacional: formData.capacidadeCargaOperacional ? parseFloat(formData.capacidadeCargaOperacional) : undefined,
         pernoite: formData.pernoite,
-        local_pernoite: formData.localPernoite || undefined,
         boa_conduta: formData.boaConduta,
-        pontos_cnh: formData.pontosCNH ? parseInt(formData.pontosCNH) : 0,
+        viagem: formData.viagem,
+        rastreador: formData.rastreador,
         data_detizacao: formData.dataDetizacao || undefined,
         data_vigilancia_sanitaria: formData.dataVigilanciaSanitaria || undefined,
         data_crlv: formData.dataCRLV || undefined,
@@ -170,18 +179,21 @@ export default function CadastroAgregados() {
           escolaridadeProprietario: "",
           estadoCivilProprietario: "",
           nomePaiProprietario: "",
-          escolaridade: "",
-          estadoCivil: "",
+          pisProprietario: "",
+          ressalvaProprietario: "",
+          nomeReferenciaProprietario: "",
+          contatoReferenciaProprietario: "",
+          ressalvaMotorista: "",
+          nomeReferenciaMotorista: "",
+          contatoReferenciaMotorista: "",
           corVeiculo: "",
-          nomePai: "",
           restricoesRota: "",
-          capacidadeCarga: "",
-          portaLateral: false,
-          quantidadePallets: "",
+          quantidadePaleteOperacional: "",
+          capacidadeCargaOperacional: "",
           pernoite: false,
-          localPernoite: "",
           boaConduta: false,
-          pontosCNH: "",
+          viagem: false,
+          rastreador: false,
           dataDetizacao: "",
           dataVigilanciaSanitaria: "",
           dataCRLV: "",
@@ -263,27 +275,6 @@ export default function CadastroAgregados() {
                 onChange={(e) => updateFormData("corVeiculo", e.target.value)}
               />
             </div>
-
-            <div>
-              <Label htmlFor="capacidadeCarga">Capacidade de Carga</Label>
-              <Input
-                id="capacidadeCarga"
-                placeholder="Ex: 15 toneladas"
-                value={formData.capacidadeCarga}
-                onChange={(e) => updateFormData("capacidadeCarga", e.target.value)}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="quantidadePallets">Quantidade de Pallets</Label>
-              <Input
-                id="quantidadePallets"
-                type="number"
-                placeholder="Ex: 24"
-                value={formData.quantidadePallets}
-                onChange={(e) => updateFormData("quantidadePallets", e.target.value)}
-              />
-            </div>
           </CardContent>
         </Card>
 
@@ -349,51 +340,33 @@ export default function CadastroAgregados() {
             </div>
 
             <div>
-              <Label htmlFor="pontosCNH">Pontos na CNH</Label>
+              <Label htmlFor="nomeReferenciaMotorista">Nome de Referência</Label>
               <Input
-                id="pontosCNH"
-                type="number"
-                placeholder="0"
-                value={formData.pontosCNH}
-                onChange={(e) => updateFormData("pontosCNH", e.target.value)}
+                id="nomeReferenciaMotorista"
+                placeholder="Nome da referência"
+                value={formData.nomeReferenciaMotorista}
+                onChange={(e) => updateFormData("nomeReferenciaMotorista", e.target.value)}
               />
             </div>
 
             <div>
-              <Label htmlFor="escolaridade">Escolaridade</Label>
-              <Select value={formData.escolaridade} onValueChange={(value) => updateFormData("escolaridade", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione a escolaridade" />
-                </SelectTrigger>
-                <SelectContent>
-                  {escolaridades.map((escolaridade) => (
-                    <SelectItem key={escolaridade} value={escolaridade}>{escolaridade}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="estadoCivil">Estado Civil</Label>
-              <Select value={formData.estadoCivil} onValueChange={(value) => updateFormData("estadoCivil", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o estado civil" />
-                </SelectTrigger>
-                <SelectContent>
-                  {estadosCivis.map((estado) => (
-                    <SelectItem key={estado} value={estado}>{estado}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="nomePai">Nome do Pai (opcional)</Label>
+              <Label htmlFor="contatoReferenciaMotorista">Contato de Referência</Label>
               <Input
-                id="nomePai"
-                placeholder="Nome do pai"
-                value={formData.nomePai}
-                onChange={(e) => updateFormData("nomePai", e.target.value)}
+                id="contatoReferenciaMotorista"
+                placeholder="(11) 99999-9999"
+                value={formData.contatoReferenciaMotorista}
+                onChange={(e) => updateFormData("contatoReferenciaMotorista", e.target.value)}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <Label htmlFor="ressalvaMotorista">Ressalva (Histórico Motorista)</Label>
+              <Textarea
+                id="ressalvaMotorista"
+                placeholder="Informações sobre o histórico do motorista"
+                value={formData.ressalvaMotorista}
+                onChange={(e) => updateFormData("ressalvaMotorista", e.target.value)}
+                rows={3}
               />
             </div>
           </CardContent>
@@ -446,6 +419,16 @@ export default function CadastroAgregados() {
             </div>
 
             <div>
+              <Label htmlFor="pisProprietario">PIS do Proprietário</Label>
+              <Input
+                id="pisProprietario"
+                placeholder="000.00000.00-0"
+                value={formData.pisProprietario}
+                onChange={(e) => updateFormData("pisProprietario", e.target.value)}
+              />
+            </div>
+
+            <div>
               <Label htmlFor="escolaridadeProprietario">Escolaridade do Proprietário</Label>
               <Select value={formData.escolaridadeProprietario} onValueChange={(value) => updateFormData("escolaridadeProprietario", value)}>
                 <SelectTrigger>
@@ -483,6 +466,26 @@ export default function CadastroAgregados() {
               />
             </div>
 
+            <div>
+              <Label htmlFor="nomeReferenciaProprietario">Nome de Referência</Label>
+              <Input
+                id="nomeReferenciaProprietario"
+                placeholder="Nome da referência"
+                value={formData.nomeReferenciaProprietario}
+                onChange={(e) => updateFormData("nomeReferenciaProprietario", e.target.value)}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="contatoReferenciaProprietario">Contato de Referência</Label>
+              <Input
+                id="contatoReferenciaProprietario"
+                placeholder="(11) 99999-9999"
+                value={formData.contatoReferenciaProprietario}
+                onChange={(e) => updateFormData("contatoReferenciaProprietario", e.target.value)}
+              />
+            </div>
+
             <div className="md:col-span-2">
               <Label htmlFor="enderecoProprietario">Endereço do Proprietário</Label>
               <Textarea
@@ -490,6 +493,17 @@ export default function CadastroAgregados() {
                 placeholder="Endereço completo"
                 value={formData.enderecoProprietario}
                 onChange={(e) => updateFormData("enderecoProprietario", e.target.value)}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <Label htmlFor="ressalvaProprietario">Ressalva (Histórico Proprietário)</Label>
+              <Textarea
+                id="ressalvaProprietario"
+                placeholder="Informações sobre o histórico do proprietário"
+                value={formData.ressalvaProprietario}
+                onChange={(e) => updateFormData("ressalvaProprietario", e.target.value)}
+                rows={3}
               />
             </div>
           </CardContent>
@@ -551,34 +565,56 @@ export default function CadastroAgregados() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="restricoesRota">Restrições de Rota</Label>
-                <Textarea
-                  id="restricoesRota"
-                  placeholder="Descreva as restrições de rota, se houver"
-                  value={formData.restricoesRota}
-                  onChange={(e) => updateFormData("restricoesRota", e.target.value)}
+                <Label htmlFor="quantidadePaleteOperacional">Quantidade de Palete</Label>
+                <Input
+                  id="quantidadePaleteOperacional"
+                  type="number"
+                  placeholder="Ex: 24"
+                  value={formData.quantidadePaleteOperacional}
+                  onChange={(e) => updateFormData("quantidadePaleteOperacional", e.target.value)}
                 />
               </div>
 
               <div>
-                <Label htmlFor="localPernoite">Local de Pernoite</Label>
+                <Label htmlFor="capacidadeCargaOperacional">Capacidade de Carga</Label>
                 <Input
-                  id="localPernoite"
-                  placeholder="Local onde o motorista pernoita"
-                  value={formData.localPernoite}
-                  onChange={(e) => updateFormData("localPernoite", e.target.value)}
+                  id="capacidadeCargaOperacional"
+                  type="number"
+                  step="0.01"
+                  placeholder="Ex: 15.5"
+                  value={formData.capacidadeCargaOperacional}
+                  onChange={(e) => updateFormData("capacidadeCargaOperacional", e.target.value)}
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <Label htmlFor="restricoesRota">Restrições de Rota</Label>
+              <Textarea
+                id="restricoesRota"
+                placeholder="Descreva as restrições de rota, se houver"
+                value={formData.restricoesRota}
+                onChange={(e) => updateFormData("restricoesRota", e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="flex items-center space-x-2">
                 <Switch
-                  id="portaLateral"
-                  checked={formData.portaLateral}
-                  onCheckedChange={(checked) => updateFormData("portaLateral", checked)}
+                  id="viagem"
+                  checked={formData.viagem}
+                  onCheckedChange={(checked) => updateFormData("viagem", checked)}
                 />
-                <Label htmlFor="portaLateral">Possui Porta Lateral</Label>
+                <Label htmlFor="viagem">Viagem</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="rastreador"
+                  checked={formData.rastreador}
+                  onCheckedChange={(checked) => updateFormData("rastreador", checked)}
+                />
+                <Label htmlFor="rastreador">Rastreador</Label>
               </div>
 
               <div className="flex items-center space-x-2">

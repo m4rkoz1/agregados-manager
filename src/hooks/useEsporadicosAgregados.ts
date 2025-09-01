@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-export interface Agregado {
+export interface EsporadicoAgregado {
   id: string;
   data_inclusao: string;
-  data_saida?: string;
+  data_saida: string;
   placa_veiculo: string;
   tipo_veiculo: string;
   nome_motorista: string;
@@ -46,9 +46,9 @@ export interface Agregado {
   updated_at: string;
 }
 
-export interface CreateAgregadoData {
-  data_inclusao?: string;
-  data_saida?: string;
+export interface CreateEsporadicoData {
+  data_inclusao: string;
+  data_saida: string;
   placa_veiculo: string;
   tipo_veiculo: string;
   nome_motorista: string;
@@ -87,26 +87,26 @@ export interface CreateAgregadoData {
   ativo?: boolean;
 }
 
-export function useAgregados() {
-  const [agregados, setAgregados] = useState<Agregado[]>([]);
+export function useEsporadicosAgregados() {
+  const [esporadicos, setEsporadicos] = useState<EsporadicoAgregado[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const fetchAgregados = async () => {
+  const fetchEsporadicos = async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('agregados')
+        .from('agregados_esporadicos')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setAgregados(data || []);
+      setEsporadicos(data || []);
     } catch (error) {
-      console.error('Erro ao buscar agregados:', error);
+      console.error('Erro ao buscar agregados esporádicos:', error);
       toast({
-        title: "Erro ao carregar agregados",
-        description: "Não foi possível carregar a lista de agregados.",
+        title: "Erro ao carregar agregados esporádicos",
+        description: "Não foi possível carregar a lista de agregados esporádicos.",
         variant: "destructive",
       });
     } finally {
@@ -114,124 +114,124 @@ export function useAgregados() {
     }
   };
 
-  const createAgregado = async (data: CreateAgregadoData): Promise<boolean> => {
+  const createEsporadico = async (data: CreateEsporadicoData): Promise<boolean> => {
     try {
       const { error } = await supabase
-        .from('agregados')
+        .from('agregados_esporadicos')
         .insert([data]);
 
       if (error) throw error;
 
       toast({
-        title: "Agregado cadastrado com sucesso!",
+        title: "Agregado esporádico cadastrado com sucesso!",
         description: `Motorista ${data.nome_motorista} - Veículo ${data.placa_veiculo}`,
       });
 
-      await fetchAgregados();
+      await fetchEsporadicos();
       return true;
     } catch (error: any) {
-      console.error('Erro ao criar agregado:', error);
+      console.error('Erro ao criar agregado esporádico:', error);
       toast({
-        title: "Erro ao cadastrar agregado",
-        description: error.message || "Não foi possível cadastrar o agregado.",
+        title: "Erro ao cadastrar agregado esporádico",
+        description: error.message || "Não foi possível cadastrar o agregado esporádico.",
         variant: "destructive",
       });
       return false;
     }
   };
 
-  const updateAgregado = async (id: string, data: Partial<CreateAgregadoData>): Promise<boolean> => {
+  const updateEsporadico = async (id: string, data: Partial<CreateEsporadicoData>): Promise<boolean> => {
     try {
       const { error } = await supabase
-        .from('agregados')
+        .from('agregados_esporadicos')
         .update(data)
         .eq('id', id);
 
       if (error) throw error;
 
       toast({
-        title: "Agregado atualizado com sucesso!",
+        title: "Agregado esporádico atualizado com sucesso!",
         description: "As informações foram atualizadas.",
       });
 
-      await fetchAgregados();
+      await fetchEsporadicos();
       return true;
     } catch (error: any) {
-      console.error('Erro ao atualizar agregado:', error);
+      console.error('Erro ao atualizar agregado esporádico:', error);
       toast({
-        title: "Erro ao atualizar agregado",
-        description: error.message || "Não foi possível atualizar o agregado.",
+        title: "Erro ao atualizar agregado esporádico",
+        description: error.message || "Não foi possível atualizar o agregado esporádico.",
         variant: "destructive",
       });
       return false;
     }
   };
 
-  const deleteAgregado = async (id: string): Promise<boolean> => {
+  const deleteEsporadico = async (id: string): Promise<boolean> => {
     try {
       const { error } = await supabase
-        .from('agregados')
+        .from('agregados_esporadicos')
         .delete()
         .eq('id', id);
 
       if (error) throw error;
 
       toast({
-        title: "Agregado removido com sucesso!",
-        description: "O agregado foi removido do sistema.",
+        title: "Agregado esporádico removido com sucesso!",
+        description: "O agregado esporádico foi removido do sistema.",
       });
 
-      await fetchAgregados();
+      await fetchEsporadicos();
       return true;
     } catch (error: any) {
-      console.error('Erro ao remover agregado:', error);
+      console.error('Erro ao remover agregado esporádico:', error);
       toast({
-        title: "Erro ao remover agregado",
-        description: error.message || "Não foi possível remover o agregado.",
+        title: "Erro ao remover agregado esporádico",
+        description: error.message || "Não foi possível remover o agregado esporádico.",
         variant: "destructive",
       });
       return false;
     }
   };
 
-  const getAgregadoById = (id: string): Agregado | undefined => {
-    return agregados.find(agregado => agregado.id === id);
+  const getEsporadicoById = (id: string): EsporadicoAgregado | undefined => {
+    return esporadicos.find(esporadico => esporadico.id === id);
   };
 
-  const getAgregadosAtivos = (): Agregado[] => {
-    return agregados.filter(agregado => agregado.ativo === true);
+  const getEsporadicosAtivos = (): EsporadicoAgregado[] => {
+    return esporadicos.filter(esporadico => esporadico.ativo === true);
   };
 
-  const getAgregadosInativos = (): Agregado[] => {
-    return agregados.filter(agregado => agregado.ativo === false);
+  const getEsporadicosInativos = (): EsporadicoAgregado[] => {
+    return esporadicos.filter(esporadico => esporadico.ativo === false);
   };
 
-  const getAgregadosComAlerta = (): Agregado[] => {
+  const getEsporadicosComAlerta = (): EsporadicoAgregado[] => {
     const hoje = new Date();
     const em30Dias = new Date(hoje.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-    return agregados.filter(agregado => {
-      const validadeCNH = new Date(agregado.validade_cnh);
-      const validadeCRLV = agregado.data_crlv ? new Date(agregado.data_crlv) : null;
+    return esporadicos.filter(esporadico => {
+      const validadeCNH = new Date(esporadico.validade_cnh);
+      const validadeCRLV = esporadico.data_crlv ? new Date(esporadico.data_crlv) : null;
 
       return validadeCNH <= em30Dias || (validadeCRLV && validadeCRLV <= em30Dias);
     });
   };
 
   useEffect(() => {
-    fetchAgregados();
+    fetchEsporadicos();
   }, []);
 
   return {
-    agregados,
+    esporadicos,
     loading,
-    createAgregado,
-    updateAgregado,
-    deleteAgregado,
-    getAgregadoById,
-    getAgregadosAtivos,
-    getAgregadosInativos,
-    getAgregadosComAlerta,
-    refetch: fetchAgregados,
+    createEsporadico,
+    updateEsporadico,
+    deleteEsporadico,
+    getEsporadicoById,
+    getEsporadicosAtivos,
+    getEsporadicosInativos,
+    getEsporadicosComAlerta,
+    refetch: fetchEsporadicos,
   };
 }

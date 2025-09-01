@@ -18,11 +18,12 @@ export type Database = {
         Row: {
           ativo: boolean | null
           boa_conduta: boolean | null
-          capacidade_carga_m3: number | null
-          capacidade_carga_toneladas: number | null
+          capacidade_carga_operacional: number | null
           categoria_cnh: string
           contato_motorista: string | null
           contato_proprietario: string | null
+          contato_referencia_motorista: string | null
+          contato_referencia_proprietario: string | null
           cor_veiculo: string | null
           cpf_proprietario: string | null
           created_at: string
@@ -32,38 +33,40 @@ export type Database = {
           data_saida: string | null
           data_vigilancia_sanitaria: string | null
           endereco_proprietario: string | null
-          escolaridade: string | null
           escolaridade_proprietario: string | null
-          estado_civil: string | null
           estado_civil_proprietario: string | null
           id: string
-          local_pernoite: string | null
           nome_motorista: string
-          nome_pai: string | null
           nome_pai_proprietario: string | null
+          nome_referencia_motorista: string | null
+          nome_referencia_proprietario: string | null
           numero_antt: string | null
           numero_cnh: string
           observacoes: string | null
           pernoite: boolean | null
+          pis_proprietario: string | null
           placa_veiculo: string
-          pontos_cnh: number | null
-          porta_lateral: boolean | null
           proprietario_veiculo: string
-          quantidade_pallets: number | null
+          quantidade_palete_operacional: number | null
+          rastreador: boolean | null
+          ressalva_motorista: string | null
+          ressalva_proprietario: string | null
           restricoes_rota: string | null
           rg_proprietario: string | null
           tipo_veiculo: string
           updated_at: string
           validade_cnh: string
+          viagem: boolean | null
         }
         Insert: {
           ativo?: boolean | null
           boa_conduta?: boolean | null
-          capacidade_carga_m3?: number | null
-          capacidade_carga_toneladas?: number | null
+          capacidade_carga_operacional?: number | null
           categoria_cnh: string
           contato_motorista?: string | null
           contato_proprietario?: string | null
+          contato_referencia_motorista?: string | null
+          contato_referencia_proprietario?: string | null
           cor_veiculo?: string | null
           cpf_proprietario?: string | null
           created_at?: string
@@ -73,38 +76,40 @@ export type Database = {
           data_saida?: string | null
           data_vigilancia_sanitaria?: string | null
           endereco_proprietario?: string | null
-          escolaridade?: string | null
           escolaridade_proprietario?: string | null
-          estado_civil?: string | null
           estado_civil_proprietario?: string | null
           id?: string
-          local_pernoite?: string | null
           nome_motorista: string
-          nome_pai?: string | null
           nome_pai_proprietario?: string | null
+          nome_referencia_motorista?: string | null
+          nome_referencia_proprietario?: string | null
           numero_antt?: string | null
           numero_cnh: string
           observacoes?: string | null
           pernoite?: boolean | null
+          pis_proprietario?: string | null
           placa_veiculo: string
-          pontos_cnh?: number | null
-          porta_lateral?: boolean | null
           proprietario_veiculo: string
-          quantidade_pallets?: number | null
+          quantidade_palete_operacional?: number | null
+          rastreador?: boolean | null
+          ressalva_motorista?: string | null
+          ressalva_proprietario?: string | null
           restricoes_rota?: string | null
           rg_proprietario?: string | null
           tipo_veiculo: string
           updated_at?: string
           validade_cnh: string
+          viagem?: boolean | null
         }
         Update: {
           ativo?: boolean | null
           boa_conduta?: boolean | null
-          capacidade_carga_m3?: number | null
-          capacidade_carga_toneladas?: number | null
+          capacidade_carga_operacional?: number | null
           categoria_cnh?: string
           contato_motorista?: string | null
           contato_proprietario?: string | null
+          contato_referencia_motorista?: string | null
+          contato_referencia_proprietario?: string | null
           cor_veiculo?: string | null
           cpf_proprietario?: string | null
           created_at?: string
@@ -114,29 +119,162 @@ export type Database = {
           data_saida?: string | null
           data_vigilancia_sanitaria?: string | null
           endereco_proprietario?: string | null
-          escolaridade?: string | null
           escolaridade_proprietario?: string | null
-          estado_civil?: string | null
           estado_civil_proprietario?: string | null
           id?: string
-          local_pernoite?: string | null
           nome_motorista?: string
-          nome_pai?: string | null
           nome_pai_proprietario?: string | null
+          nome_referencia_motorista?: string | null
+          nome_referencia_proprietario?: string | null
           numero_antt?: string | null
           numero_cnh?: string
           observacoes?: string | null
           pernoite?: boolean | null
+          pis_proprietario?: string | null
           placa_veiculo?: string
-          pontos_cnh?: number | null
-          porta_lateral?: boolean | null
           proprietario_veiculo?: string
-          quantidade_pallets?: number | null
+          quantidade_palete_operacional?: number | null
+          rastreador?: boolean | null
+          ressalva_motorista?: string | null
+          ressalva_proprietario?: string | null
           restricoes_rota?: string | null
           rg_proprietario?: string | null
           tipo_veiculo?: string
           updated_at?: string
           validade_cnh?: string
+          viagem?: boolean | null
+        }
+        Relationships: []
+      }
+      agregados_esporadicos: {
+        Row: {
+          ativo: boolean | null
+          boa_conduta: boolean | null
+          capacidade_carga_operacional: number | null
+          categoria_cnh: string
+          contato_motorista: string | null
+          contato_proprietario: string | null
+          contato_referencia_motorista: string | null
+          contato_referencia_proprietario: string | null
+          cor_veiculo: string | null
+          cpf_proprietario: string | null
+          created_at: string
+          data_crlv: string | null
+          data_detizacao: string | null
+          data_inclusao: string
+          data_saida: string
+          data_vigilancia_sanitaria: string | null
+          endereco_proprietario: string | null
+          escolaridade_proprietario: string | null
+          estado_civil_proprietario: string | null
+          id: string
+          nome_motorista: string
+          nome_pai_proprietario: string | null
+          nome_referencia_motorista: string | null
+          nome_referencia_proprietario: string | null
+          numero_antt: string | null
+          numero_cnh: string
+          observacoes: string | null
+          pernoite: boolean | null
+          pis_proprietario: string | null
+          placa_veiculo: string
+          proprietario_veiculo: string
+          quantidade_palete_operacional: number | null
+          rastreador: boolean | null
+          ressalva_motorista: string | null
+          ressalva_proprietario: string | null
+          restricoes_rota: string | null
+          rg_proprietario: string | null
+          tipo_veiculo: string
+          updated_at: string
+          validade_cnh: string
+          viagem: boolean | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          boa_conduta?: boolean | null
+          capacidade_carga_operacional?: number | null
+          categoria_cnh: string
+          contato_motorista?: string | null
+          contato_proprietario?: string | null
+          contato_referencia_motorista?: string | null
+          contato_referencia_proprietario?: string | null
+          cor_veiculo?: string | null
+          cpf_proprietario?: string | null
+          created_at?: string
+          data_crlv?: string | null
+          data_detizacao?: string | null
+          data_inclusao?: string
+          data_saida: string
+          data_vigilancia_sanitaria?: string | null
+          endereco_proprietario?: string | null
+          escolaridade_proprietario?: string | null
+          estado_civil_proprietario?: string | null
+          id?: string
+          nome_motorista: string
+          nome_pai_proprietario?: string | null
+          nome_referencia_motorista?: string | null
+          nome_referencia_proprietario?: string | null
+          numero_antt?: string | null
+          numero_cnh: string
+          observacoes?: string | null
+          pernoite?: boolean | null
+          pis_proprietario?: string | null
+          placa_veiculo: string
+          proprietario_veiculo: string
+          quantidade_palete_operacional?: number | null
+          rastreador?: boolean | null
+          ressalva_motorista?: string | null
+          ressalva_proprietario?: string | null
+          restricoes_rota?: string | null
+          rg_proprietario?: string | null
+          tipo_veiculo: string
+          updated_at?: string
+          validade_cnh: string
+          viagem?: boolean | null
+        }
+        Update: {
+          ativo?: boolean | null
+          boa_conduta?: boolean | null
+          capacidade_carga_operacional?: number | null
+          categoria_cnh?: string
+          contato_motorista?: string | null
+          contato_proprietario?: string | null
+          contato_referencia_motorista?: string | null
+          contato_referencia_proprietario?: string | null
+          cor_veiculo?: string | null
+          cpf_proprietario?: string | null
+          created_at?: string
+          data_crlv?: string | null
+          data_detizacao?: string | null
+          data_inclusao?: string
+          data_saida?: string
+          data_vigilancia_sanitaria?: string | null
+          endereco_proprietario?: string | null
+          escolaridade_proprietario?: string | null
+          estado_civil_proprietario?: string | null
+          id?: string
+          nome_motorista?: string
+          nome_pai_proprietario?: string | null
+          nome_referencia_motorista?: string | null
+          nome_referencia_proprietario?: string | null
+          numero_antt?: string | null
+          numero_cnh?: string
+          observacoes?: string | null
+          pernoite?: boolean | null
+          pis_proprietario?: string | null
+          placa_veiculo?: string
+          proprietario_veiculo?: string
+          quantidade_palete_operacional?: number | null
+          rastreador?: boolean | null
+          ressalva_motorista?: string | null
+          ressalva_proprietario?: string | null
+          restricoes_rota?: string | null
+          rg_proprietario?: string | null
+          tipo_veiculo?: string
+          updated_at?: string
+          validade_cnh?: string
+          viagem?: boolean | null
         }
         Relationships: []
       }
@@ -177,6 +315,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      campos_configuracao: {
+        Row: {
+          campo_ativo: boolean | null
+          campo_categoria: string | null
+          campo_label: string
+          campo_nome: string
+          campo_obrigatorio: boolean | null
+          campo_opcoes: Json | null
+          campo_ordem: number | null
+          campo_tipo: string
+          created_at: string
+          id: string
+          tabela_nome: string
+          updated_at: string
+        }
+        Insert: {
+          campo_ativo?: boolean | null
+          campo_categoria?: string | null
+          campo_label: string
+          campo_nome: string
+          campo_obrigatorio?: boolean | null
+          campo_opcoes?: Json | null
+          campo_ordem?: number | null
+          campo_tipo: string
+          created_at?: string
+          id?: string
+          tabela_nome: string
+          updated_at?: string
+        }
+        Update: {
+          campo_ativo?: boolean | null
+          campo_categoria?: string | null
+          campo_label?: string
+          campo_nome?: string
+          campo_obrigatorio?: boolean | null
+          campo_opcoes?: Json | null
+          campo_ordem?: number | null
+          campo_tipo?: string
+          created_at?: string
+          id?: string
+          tabela_nome?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {
