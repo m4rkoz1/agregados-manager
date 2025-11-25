@@ -3,7 +3,6 @@ import {
   Home, 
   UserPlus, 
   Truck, 
-  Calendar, 
   FileText,
   Settings 
 } from "lucide-react";
@@ -37,12 +36,6 @@ const menuItems = [
     url: "/frota",
     icon: Truck,
     description: "Agregados ativos"
-  },
-  {
-    title: "Agregados Esporádicos",
-    url: "/esporadicos",
-    icon: Calendar,
-    description: "Trabalhos pontuais"
   },
   {
     title: "Relatórios",

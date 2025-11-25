@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Save, UserPlus } from "lucide-react";
 import { useAgregados, CreateAgregadoData } from "@/hooks/useAgregados";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 export default function CadastroAgregados() {
   const { toast } = useToast();
@@ -53,7 +54,8 @@ export default function CadastroAgregados() {
     dataDetizacao: "",
     dataVigilanciaSanitaria: "",
     dataCRLV: "",
-    observacoes: ""
+    observacoes: "",
+    esporadico: false
   });
 
   const tiposVeiculo = [
@@ -102,7 +104,6 @@ export default function CadastroAgregados() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validações básicas
     if (!formData.placa || !formData.nomeMotorista || !formData.tipoVeiculo || !formData.numeroCNH) {
       toast({
         title: "Erro de validação",
@@ -153,13 +154,13 @@ export default function CadastroAgregados() {
         data_vigilancia_sanitaria: formData.dataVigilanciaSanitaria || undefined,
         data_crlv: formData.dataCRLV || undefined,
         observacoes: formData.observacoes || undefined,
-        ativo: true
+        ativo: true,
+        esporadico: formData.esporadico
       };
 
       const success = await createAgregado(agregadoData);
       
       if (success) {
-        // Reset form
         setFormData({
           dataInclusao: "",
           dataSaida: "",
@@ -197,10 +198,10 @@ export default function CadastroAgregados() {
           dataDetizacao: "",
           dataVigilanciaSanitaria: "",
           dataCRLV: "",
-          observacoes: ""
+          observacoes: "",
+          esporadico: false
         });
         
-        // Redirecionar para a lista de frota
         setTimeout(() => navigate('/frota'), 1500);
       }
     } finally {
@@ -214,65 +215,218 @@ export default function CadastroAgregados() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-3">
-          <UserPlus className="w-8 h-8 text-primary" />
-          Cadastro de Agregados
-        </h1>
-        <p className="text-muted-foreground">
-          Cadastre novos agregados e veículos na frota Giannone Transportes
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-3">
+            <UserPlus className="w-8 h-8 text-primary" />
+            Cadastro de Agregados
+          </h1>
+          <p className="text-muted-foreground">
+            Cadastre novos agregados e veículos na frota Giannone Transportes
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 rounded-lg shadow-lg">
+          <Switch
+            id="esporadico"
+            checked={formData.esporadico}
+            onCheckedChange={(checked) => updateFormData("esporadico", checked)}
+            className="data-[state=checked]:bg-white"
+          />
+          <Label htmlFor="esporadico" className="text-white font-bold text-lg cursor-pointer">
+            ESPORÁDICO
+          </Label>
+          {formData.esporadico && (
+            <Badge className="bg-white text-orange-600 font-bold">ATIVO</Badge>
+          )}
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Dados do Veículo */}
+        {/* Dados do Veículo + Informações Operacionais + Documentos */}
         <Card className="shadow-card">
           <CardHeader>
             <CardTitle>Dados do Veículo</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="dataInclusao">Data de Inclusão</Label>
-              <Input
-                id="dataInclusao"
-                type="date"
-                value={formData.dataInclusao}
-                onChange={(e) => updateFormData("dataInclusao", e.target.value)}
-              />
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="dataInclusao">Data de Inclusão</Label>
+                <Input
+                  id="dataInclusao"
+                  type="date"
+                  value={formData.dataInclusao}
+                  onChange={(e) => updateFormData("dataInclusao", e.target.value)}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="placa">Placa do Veículo *</Label>
+                <Input
+                  id="placa"
+                  placeholder="ABC-1234"
+                  value={formData.placa}
+                  onChange={(e) => updateFormData("placa", e.target.value.toUpperCase())}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="tipoVeiculo">Tipo do Veículo *</Label>
+                <Select value={formData.tipoVeiculo} onValueChange={(value) => updateFormData("tipoVeiculo", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tiposVeiculo.map((tipo) => (
+                      <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="corVeiculo">Cor do Veículo</Label>
+                <Input
+                  id="corVeiculo"
+                  placeholder="Branco"
+                  value={formData.corVeiculo}
+                  onChange={(e) => updateFormData("corVeiculo", e.target.value)}
+                />
+              </div>
             </div>
-            
-            <div>
-              <Label htmlFor="placa">Placa do Veículo *</Label>
-              <Input
-                id="placa"
-                placeholder="ABC-1234"
-                value={formData.placa}
-                onChange={(e) => updateFormData("placa", e.target.value.toUpperCase())}
-                required
-              />
+
+            <div className="border-t pt-4">
+              <h3 className="font-semibold mb-4">Informações Operacionais</h3>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="quantidadePaleteOperacional">Quantidade de Palete</Label>
+                    <Input
+                      id="quantidadePaleteOperacional"
+                      type="number"
+                      placeholder="Ex: 24"
+                      value={formData.quantidadePaleteOperacional}
+                      onChange={(e) => updateFormData("quantidadePaleteOperacional", e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="capacidadeCargaOperacional">Capacidade de Carga</Label>
+                    <Input
+                      id="capacidadeCargaOperacional"
+                      type="number"
+                      step="0.01"
+                      placeholder="Ex: 15.5"
+                      value={formData.capacidadeCargaOperacional}
+                      onChange={(e) => updateFormData("capacidadeCargaOperacional", e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="restricoesRota">Restrições de Rota</Label>
+                  <Textarea
+                    id="restricoesRota"
+                    placeholder="Descreva as restrições de rota, se houver"
+                    value={formData.restricoesRota}
+                    onChange={(e) => updateFormData("restricoesRota", e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="viagem"
+                      checked={formData.viagem}
+                      onCheckedChange={(checked) => updateFormData("viagem", checked)}
+                    />
+                    <Label htmlFor="viagem">Viagem</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="rastreador"
+                      checked={formData.rastreador}
+                      onCheckedChange={(checked) => updateFormData("rastreador", checked)}
+                    />
+                    <Label htmlFor="rastreador">Rastreador</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="pernoite"
+                      checked={formData.pernoite}
+                      onCheckedChange={(checked) => updateFormData("pernoite", checked)}
+                    />
+                    <Label htmlFor="pernoite">Faz Pernoite</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="boaConduta"
+                      checked={formData.boaConduta}
+                      onCheckedChange={(checked) => updateFormData("boaConduta", checked)}
+                    />
+                    <Label htmlFor="boaConduta">Boa Conduta</Label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t pt-4">
+              <h3 className="font-semibold mb-4">Documentos e Certificações</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="numeroANTT">Número ANTT</Label>
+                  <Input
+                    id="numeroANTT"
+                    placeholder="123456789"
+                    value={formData.numeroANTT}
+                    onChange={(e) => updateFormData("numeroANTT", e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="dataDetizacao">Data da Detetização</Label>
+                  <Input
+                    id="dataDetizacao"
+                    type="date"
+                    value={formData.dataDetizacao}
+                    onChange={(e) => updateFormData("dataDetizacao", e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="dataVigilanciaSanitaria">Data da Vigilância Sanitária</Label>
+                  <Input
+                    id="dataVigilanciaSanitaria"
+                    type="date"
+                    value={formData.dataVigilanciaSanitaria}
+                    onChange={(e) => updateFormData("dataVigilanciaSanitaria", e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="dataCRLV">Data do CRLV</Label>
+                  <Input
+                    id="dataCRLV"
+                    type="date"
+                    value={formData.dataCRLV}
+                    onChange={(e) => updateFormData("dataCRLV", e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
 
             <div>
-              <Label htmlFor="tipoVeiculo">Tipo do Veículo *</Label>
-              <Select value={formData.tipoVeiculo} onValueChange={(value) => updateFormData("tipoVeiculo", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  {tiposVeiculo.map((tipo) => (
-                    <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="corVeiculo">Cor do Veículo</Label>
-              <Input
-                id="corVeiculo"
-                placeholder="Branco"
-                value={formData.corVeiculo}
-                onChange={(e) => updateFormData("corVeiculo", e.target.value)}
+              <Label htmlFor="observacoes">Observações Gerais</Label>
+              <Textarea
+                id="observacoes"
+                placeholder="Informações adicionais sobre o agregado"
+                value={formData.observacoes}
+                onChange={(e) => updateFormData("observacoes", e.target.value)}
+                rows={3}
               />
             </div>
           </CardContent>
@@ -503,146 +657,6 @@ export default function CadastroAgregados() {
                 placeholder="Informações sobre o histórico do proprietário"
                 value={formData.ressalvaProprietario}
                 onChange={(e) => updateFormData("ressalvaProprietario", e.target.value)}
-                rows={3}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Documentos e Datas */}
-        <Card className="shadow-card">
-          <CardHeader>
-            <CardTitle>Documentos e Certificações</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="numeroANTT">Número ANTT</Label>
-              <Input
-                id="numeroANTT"
-                placeholder="123456789"
-                value={formData.numeroANTT}
-                onChange={(e) => updateFormData("numeroANTT", e.target.value)}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="dataDetizacao">Data da Detetização</Label>
-              <Input
-                id="dataDetizacao"
-                type="date"
-                value={formData.dataDetizacao}
-                onChange={(e) => updateFormData("dataDetizacao", e.target.value)}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="dataVigilanciaSanitaria">Data da Vigilância Sanitária</Label>
-              <Input
-                id="dataVigilanciaSanitaria"
-                type="date"
-                value={formData.dataVigilanciaSanitaria}
-                onChange={(e) => updateFormData("dataVigilanciaSanitaria", e.target.value)}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="dataCRLV">Data do CRLV</Label>
-              <Input
-                id="dataCRLV"
-                type="date"
-                value={formData.dataCRLV}
-                onChange={(e) => updateFormData("dataCRLV", e.target.value)}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Informações Operacionais */}
-        <Card className="shadow-card">
-          <CardHeader>
-            <CardTitle>Informações Operacionais</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="quantidadePaleteOperacional">Quantidade de Palete</Label>
-                <Input
-                  id="quantidadePaleteOperacional"
-                  type="number"
-                  placeholder="Ex: 24"
-                  value={formData.quantidadePaleteOperacional}
-                  onChange={(e) => updateFormData("quantidadePaleteOperacional", e.target.value)}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="capacidadeCargaOperacional">Capacidade de Carga</Label>
-                <Input
-                  id="capacidadeCargaOperacional"
-                  type="number"
-                  step="0.01"
-                  placeholder="Ex: 15.5"
-                  value={formData.capacidadeCargaOperacional}
-                  onChange={(e) => updateFormData("capacidadeCargaOperacional", e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="restricoesRota">Restrições de Rota</Label>
-              <Textarea
-                id="restricoesRota"
-                placeholder="Descreva as restrições de rota, se houver"
-                value={formData.restricoesRota}
-                onChange={(e) => updateFormData("restricoesRota", e.target.value)}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="viagem"
-                  checked={formData.viagem}
-                  onCheckedChange={(checked) => updateFormData("viagem", checked)}
-                />
-                <Label htmlFor="viagem">Viagem</Label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="rastreador"
-                  checked={formData.rastreador}
-                  onCheckedChange={(checked) => updateFormData("rastreador", checked)}
-                />
-                <Label htmlFor="rastreador">Rastreador</Label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="pernoite"
-                  checked={formData.pernoite}
-                  onCheckedChange={(checked) => updateFormData("pernoite", checked)}
-                />
-                <Label htmlFor="pernoite">Faz Pernoite</Label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="boaConduta"
-                  checked={formData.boaConduta}
-                  onCheckedChange={(checked) => updateFormData("boaConduta", checked)}
-                />
-                <Label htmlFor="boaConduta">Boa Conduta</Label>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="observacoes">Observações Gerais</Label>
-              <Textarea
-                id="observacoes"
-                placeholder="Informações adicionais sobre o agregado"
-                value={formData.observacoes}
-                onChange={(e) => updateFormData("observacoes", e.target.value)}
                 rows={3}
               />
             </div>
