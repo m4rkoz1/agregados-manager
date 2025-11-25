@@ -4,7 +4,8 @@ import {
   UserPlus, 
   Truck, 
   FileText,
-  Settings 
+  Settings,
+  Users
 } from "lucide-react";
 
 import {
@@ -42,6 +43,12 @@ const menuItems = [
     url: "/relatorios",
     icon: FileText,
     description: "Exportações e análises"
+  },
+  {
+    title: "CRM",
+    url: "/crm",
+    icon: Users,
+    description: "Captação e agenda"
   }
 ];
 

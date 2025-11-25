@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import CadastroAgregados from "./pages/CadastroAgregados";
 import FrotaAtual from "./pages/FrotaAtual";
 import Relatorios from "./pages/Relatorios";
+import CRM from "./pages/CRM";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/cadastro" element={<CadastroAgregados />} />
             <Route path="/frota" element={<FrotaAtual />} />
             <Route path="/relatorios" element={<Relatorios />} />
+            <Route path="/crm" element={<CRM />} />
             <Route path="/configuracoes" element={<div className="p-8 text-center text-muted-foreground">Página em desenvolvimento</div>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
