@@ -42,6 +42,9 @@ export interface Agregado {
   observacoes?: string;
   ativo?: boolean;
   esporadico?: boolean;
+  foto_veiculo?: string;
+  foto_motorista?: string;
+  foto_proprietario?: string;
   created_at: string;
   updated_at: string;
 }
@@ -86,6 +89,9 @@ export interface CreateAgregadoData {
   observacoes?: string;
   ativo?: boolean;
   esporadico?: boolean;
+  foto_veiculo?: string;
+  foto_motorista?: string;
+  foto_proprietario?: string;
 }
 
 const STORAGE_KEY = 'giannone_agregados';
