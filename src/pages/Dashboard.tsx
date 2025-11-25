@@ -66,6 +66,7 @@ export default function Dashboard() {
     const agregadosAtivos = getAgregadosAtivos();
     const agregadosInativos = getAgregadosInativos();
     const documentosVencendo = getAgregadosComAlerta();
+    const esporadicos = agregados.filter(a => a.esporadico);
     
     const currentMonth = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 
@@ -109,11 +110,11 @@ export default function Dashboard() {
       },
       {
         title: "Esporádicos do Mês",
-        value: 0,
+        value: esporadicos.length,
         description: currentMonth,
         icon: Calendar,
         variant: "default" as const,
-        trend: { value: 0, isPositive: true }
+        trend: { value: Math.round((esporadicos.length / totalAgregados) * 100), isPositive: true }
       }
     ];
   }, [agregados, getAgregadosAtivos, getAgregadosInativos, getAgregadosComAlerta, loading]);

@@ -29,6 +29,7 @@ export default function FrotaAtual() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [filterEsporadico, setFilterEsporadico] = useState("all");
   const [selectedAgregado, setSelectedAgregado] = useState<Agregado | null>(null);
   const [editingAgregado, setEditingAgregado] = useState<Agregado | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -91,8 +92,11 @@ export default function FrotaAtual() {
     
     const matchesType = filterType === "all" || agregado.tipo_veiculo === filterType;
     const matchesStatus = filterStatus === "all" || agregado.status === filterStatus;
+    const matchesEsporadico = filterEsporadico === "all" || 
+      (filterEsporadico === "sim" && agregado.esporadico) ||
+      (filterEsporadico === "nao" && !agregado.esporadico);
     
-    return matchesSearch && matchesType && matchesStatus;
+    return matchesSearch && matchesType && matchesStatus && matchesEsporadico;
   });
 
   const handleDelete = async (id: string) => {
@@ -190,7 +194,7 @@ export default function FrotaAtual() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -207,13 +211,16 @@ export default function FrotaAtual() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os tipos</SelectItem>
-                <SelectItem value="Carreta">Carreta</SelectItem>
-                <SelectItem value="Truck">Truck</SelectItem>
-                <SelectItem value="Toco">Toco</SelectItem>
-                <SelectItem value="Van">Van</SelectItem>
                 <SelectItem value="3/4">3/4</SelectItem>
+                <SelectItem value="Toco">Toco</SelectItem>
+                <SelectItem value="Truck">Truck</SelectItem>
+                <SelectItem value="Carreta">Carreta</SelectItem>
+                <SelectItem value="Van">Van</SelectItem>
                 <SelectItem value="Bitrem">Bitrem</SelectItem>
                 <SelectItem value="Rodotrem">Rodotrem</SelectItem>
+                <SelectItem value="Bongo">Bongo</SelectItem>
+                <SelectItem value="Cargovan">Cargovan</SelectItem>
+                <SelectItem value="Fiorino">Fiorino</SelectItem>
               </SelectContent>
             </Select>
 
@@ -226,6 +233,17 @@ export default function FrotaAtual() {
                 <SelectItem value="ativo">Ativo</SelectItem>
                 <SelectItem value="inativo">Inativo</SelectItem>
                 <SelectItem value="pendente">Pendente</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={filterEsporadico} onValueChange={setFilterEsporadico}>
+              <SelectTrigger>
+                <SelectValue placeholder="Esporádico" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="sim">Esporádicos</SelectItem>
+                <SelectItem value="nao">Fixos</SelectItem>
               </SelectContent>
             </Select>
 
@@ -262,6 +280,11 @@ export default function FrotaAtual() {
                         <div className="flex items-center gap-3 mb-1">
                           <h3 className="font-semibold text-foreground">{agregado.nome_motorista}</h3>
                           {getStatusBadge(agregado.status)}
+                          {agregado.esporadico && (
+                            <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold">
+                              ESPORÁDICO
+                            </Badge>
+                          )}
                           {agregado.alertas.length > 0 && (
                             <Badge variant="outline" className="text-warning border-warning">
                               {agregado.alertas.length} alerta(s)

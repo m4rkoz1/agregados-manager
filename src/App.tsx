@@ -7,7 +7,6 @@ import { AppLayout } from "./components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import CadastroAgregados from "./pages/CadastroAgregados";
 import FrotaAtual from "./pages/FrotaAtual";
-import EsporadicosAgregados from "./pages/EsporadicosAgregados";
 import Relatorios from "./pages/Relatorios";
 import NotFound from "./pages/NotFound";
 
@@ -24,7 +23,6 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/cadastro" element={<CadastroAgregados />} />
             <Route path="/frota" element={<FrotaAtual />} />
-            <Route path="/esporadicos" element={<EsporadicosAgregados />} />
             <Route path="/relatorios" element={<Relatorios />} />
             <Route path="/configuracoes" element={<div className="p-8 text-center text-muted-foreground">Página em desenvolvimento</div>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

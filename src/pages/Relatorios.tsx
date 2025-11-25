@@ -20,6 +20,7 @@ export default function Relatorios() {
   ]);
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterType, setFilterType] = useState("all");
+  const [filterEsporadico, setFilterEsporadico] = useState("all");
 
   const availableFields = [
     { key: 'nome_motorista', label: 'Nome do Motorista' },
@@ -35,29 +36,32 @@ export default function Relatorios() {
     { key: 'data_inclusao', label: 'Data de Inclusão' },
     { key: 'data_saida', label: 'Data de Saída' },
     { key: 'cor_veiculo', label: 'Cor do Veículo' },
-    { key: 'capacidade_carga_toneladas', label: 'Capacidade de Carga (ton)' },
-    { key: 'capacidade_carga_m3', label: 'Capacidade de Carga (m³)' },
-    { key: 'porta_lateral', label: 'Porta Lateral' },
-    { key: 'quantidade_pallets', label: 'Quantidade de Pallets' },
+    { key: 'quantidade_palete_operacional', label: 'Quantidade de Paletes' },
+    { key: 'capacidade_carga_operacional', label: 'Capacidade de Carga' },
+    { key: 'viagem', label: 'Viagem' },
+    { key: 'rastreador', label: 'Rastreador' },
     { key: 'pernoite', label: 'Pernoite' },
-    { key: 'local_pernoite', label: 'Local de Pernoite' },
     { key: 'boa_conduta', label: 'Boa Conduta' },
-    { key: 'pontos_cnh', label: 'Pontos na CNH' },
-    { key: 'escolaridade', label: 'Escolaridade do Motorista' },
-    { key: 'estado_civil', label: 'Estado Civil do Motorista' },
-    { key: 'nome_pai', label: 'Nome do Pai do Motorista' },
     { key: 'cpf_proprietario', label: 'CPF do Proprietário' },
     { key: 'rg_proprietario', label: 'RG do Proprietário' },
+    { key: 'pis_proprietario', label: 'PIS do Proprietário' },
     { key: 'endereco_proprietario', label: 'Endereço do Proprietário' },
     { key: 'escolaridade_proprietario', label: 'Escolaridade do Proprietário' },
     { key: 'estado_civil_proprietario', label: 'Estado Civil do Proprietário' },
     { key: 'nome_pai_proprietario', label: 'Nome do Pai do Proprietário' },
+    { key: 'nome_referencia_proprietario', label: 'Nome de Referência do Proprietário' },
+    { key: 'contato_referencia_proprietario', label: 'Contato de Referência do Proprietário' },
+    { key: 'ressalva_proprietario', label: 'Ressalva do Proprietário' },
+    { key: 'nome_referencia_motorista', label: 'Nome de Referência do Motorista' },
+    { key: 'contato_referencia_motorista', label: 'Contato de Referência do Motorista' },
+    { key: 'ressalva_motorista', label: 'Ressalva do Motorista' },
     { key: 'data_detizacao', label: 'Data da Detetização' },
     { key: 'data_vigilancia_sanitaria', label: 'Data da Vigilância Sanitária' },
     { key: 'data_crlv', label: 'Data do CRLV' },
     { key: 'restricoes_rota', label: 'Restrições de Rota' },
     { key: 'observacoes', label: 'Observações' },
     { key: 'ativo', label: 'Status (Ativo/Inativo)' },
+    { key: 'esporadico', label: 'Esporádico' },
     { key: 'created_at', label: 'Data de Criação' },
     { key: 'updated_at', label: 'Última Atualização' }
   ];
@@ -80,8 +84,11 @@ export default function Relatorios() {
     const status = getAgregadoStatus(agregado);
     const matchesStatus = filterStatus === "all" || status === filterStatus;
     const matchesType = filterType === "all" || agregado.tipo_veiculo === filterType;
+    const matchesEsporadico = filterEsporadico === "all" || 
+      (filterEsporadico === "sim" && agregado.esporadico) ||
+      (filterEsporadico === "nao" && !agregado.esporadico);
     
-    return matchesStatus && matchesType;
+    return matchesStatus && matchesType && matchesEsporadico;
   });
 
   const handleFieldChange = (fieldKey: string, checked: boolean) => {
@@ -193,7 +200,7 @@ export default function Relatorios() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="filterStatus">Status</Label>
               <Select value={filterStatus} onValueChange={setFilterStatus}>
@@ -217,13 +224,30 @@ export default function Relatorios() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os tipos</SelectItem>
-                  <SelectItem value="Carreta">Carreta</SelectItem>
-                  <SelectItem value="Truck">Truck</SelectItem>
-                  <SelectItem value="Toco">Toco</SelectItem>
-                  <SelectItem value="Van">Van</SelectItem>
                   <SelectItem value="3/4">3/4</SelectItem>
+                  <SelectItem value="Toco">Toco</SelectItem>
+                  <SelectItem value="Truck">Truck</SelectItem>
+                  <SelectItem value="Carreta">Carreta</SelectItem>
+                  <SelectItem value="Van">Van</SelectItem>
                   <SelectItem value="Bitrem">Bitrem</SelectItem>
                   <SelectItem value="Rodotrem">Rodotrem</SelectItem>
+                  <SelectItem value="Bongo">Bongo</SelectItem>
+                  <SelectItem value="Cargovan">Cargovan</SelectItem>
+                  <SelectItem value="Fiorino">Fiorino</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="filterEsporadico">Esporádico</Label>
+              <Select value={filterEsporadico} onValueChange={setFilterEsporadico}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Filtrar por esporádico" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="sim">Esporádicos</SelectItem>
+                  <SelectItem value="nao">Fixos</SelectItem>
                 </SelectContent>
               </Select>
             </div>

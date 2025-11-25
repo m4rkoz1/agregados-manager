@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export interface Agregado {
@@ -42,6 +41,7 @@ export interface Agregado {
   data_crlv?: string;
   observacoes?: string;
   ativo?: boolean;
+  esporadico?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -85,28 +85,28 @@ export interface CreateAgregadoData {
   data_crlv?: string;
   observacoes?: string;
   ativo?: boolean;
+  esporadico?: boolean;
 }
+
+const STORAGE_KEY = 'giannone_agregados';
 
 export function useAgregados() {
   const [agregados, setAgregados] = useState<Agregado[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const fetchAgregados = async () => {
+  const loadFromStorage = () => {
     try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('agregados')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setAgregados(data || []);
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        setAgregados(parsed);
+      }
     } catch (error) {
-      console.error('Erro ao buscar agregados:', error);
+      console.error('Erro ao carregar do localStorage:', error);
       toast({
-        title: "Erro ao carregar agregados",
-        description: "Não foi possível carregar a lista de agregados.",
+        title: "Erro ao carregar dados",
+        description: "Não foi possível carregar os dados salvos.",
         variant: "destructive",
       });
     } finally {
@@ -114,20 +114,40 @@ export function useAgregados() {
     }
   };
 
+  const saveToStorage = (data: Agregado[]) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error('Erro ao salvar no localStorage:', error);
+      toast({
+        title: "Erro ao salvar",
+        description: "Não foi possível salvar os dados.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const createAgregado = async (data: CreateAgregadoData): Promise<boolean> => {
     try {
-      const { error } = await supabase
-        .from('agregados')
-        .insert([data]);
+      const now = new Date().toISOString();
+      const newAgregado: Agregado = {
+        ...data,
+        id: crypto.randomUUID(),
+        data_inclusao: data.data_inclusao || new Date().toISOString().split('T')[0],
+        created_at: now,
+        updated_at: now,
+        ativo: data.ativo !== undefined ? data.ativo : true,
+      };
 
-      if (error) throw error;
+      const updated = [...agregados, newAgregado];
+      setAgregados(updated);
+      saveToStorage(updated);
 
       toast({
         title: "Agregado cadastrado com sucesso!",
         description: `Motorista ${data.nome_motorista} - Veículo ${data.placa_veiculo}`,
       });
 
-      await fetchAgregados();
       return true;
     } catch (error: any) {
       console.error('Erro ao criar agregado:', error);
@@ -142,19 +162,20 @@ export function useAgregados() {
 
   const updateAgregado = async (id: string, data: Partial<CreateAgregadoData>): Promise<boolean> => {
     try {
-      const { error } = await supabase
-        .from('agregados')
-        .update(data)
-        .eq('id', id);
+      const updated = agregados.map(agregado =>
+        agregado.id === id
+          ? { ...agregado, ...data, updated_at: new Date().toISOString() }
+          : agregado
+      );
 
-      if (error) throw error;
+      setAgregados(updated);
+      saveToStorage(updated);
 
       toast({
         title: "Agregado atualizado com sucesso!",
         description: "As informações foram atualizadas.",
       });
 
-      await fetchAgregados();
       return true;
     } catch (error: any) {
       console.error('Erro ao atualizar agregado:', error);
@@ -169,19 +190,15 @@ export function useAgregados() {
 
   const deleteAgregado = async (id: string): Promise<boolean> => {
     try {
-      const { error } = await supabase
-        .from('agregados')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      const updated = agregados.filter(agregado => agregado.id !== id);
+      setAgregados(updated);
+      saveToStorage(updated);
 
       toast({
         title: "Agregado removido com sucesso!",
         description: "O agregado foi removido do sistema.",
       });
 
-      await fetchAgregados();
       return true;
     } catch (error: any) {
       console.error('Erro ao remover agregado:', error);
@@ -219,7 +236,7 @@ export function useAgregados() {
   };
 
   useEffect(() => {
-    fetchAgregados();
+    loadFromStorage();
   }, []);
 
   return {
@@ -232,6 +249,6 @@ export function useAgregados() {
     getAgregadosAtivos,
     getAgregadosInativos,
     getAgregadosComAlerta,
-    refetch: fetchAgregados,
+    refetch: loadFromStorage,
   };
 }
