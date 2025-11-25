@@ -11,6 +11,7 @@ import { Save, UserPlus } from "lucide-react";
 import { useAgregados, CreateAgregadoData } from "@/hooks/useAgregados";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { ImageUpload } from "@/components/ImageUpload";
 
 export default function CadastroAgregados() {
   const { toast } = useToast();
@@ -55,7 +56,10 @@ export default function CadastroAgregados() {
     dataVigilanciaSanitaria: "",
     dataCRLV: "",
     observacoes: "",
-    esporadico: false
+    esporadico: false,
+    fotoVeiculo: undefined as string | undefined,
+    fotoMotorista: undefined as string | undefined,
+    fotoProprietario: undefined as string | undefined
   });
 
   const tiposVeiculo = [
@@ -155,7 +159,10 @@ export default function CadastroAgregados() {
         data_crlv: formData.dataCRLV || undefined,
         observacoes: formData.observacoes || undefined,
         ativo: true,
-        esporadico: formData.esporadico
+        esporadico: formData.esporadico,
+        foto_veiculo: formData.fotoVeiculo,
+        foto_motorista: formData.fotoMotorista,
+        foto_proprietario: formData.fotoProprietario
       };
 
       const success = await createAgregado(agregadoData);
@@ -199,7 +206,10 @@ export default function CadastroAgregados() {
           dataVigilanciaSanitaria: "",
           dataCRLV: "",
           observacoes: "",
-          esporadico: false
+          esporadico: false,
+          fotoVeiculo: undefined,
+          fotoMotorista: undefined,
+          fotoProprietario: undefined
         });
         
         setTimeout(() => navigate('/frota'), 1500);
@@ -243,6 +253,35 @@ export default function CadastroAgregados() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Seção de Fotos */}
+        <Card className="shadow-card bg-gradient-to-br from-background to-muted/20">
+          <CardHeader>
+            <CardTitle>Fotos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <ImageUpload
+                id="fotoVeiculo"
+                label="Foto do Veículo"
+                value={formData.fotoVeiculo}
+                onChange={(value) => updateFormData("fotoVeiculo", value)}
+              />
+              <ImageUpload
+                id="fotoMotorista"
+                label="Foto do Motorista"
+                value={formData.fotoMotorista}
+                onChange={(value) => updateFormData("fotoMotorista", value)}
+              />
+              <ImageUpload
+                id="fotoProprietario"
+                label="Foto do Proprietário"
+                value={formData.fotoProprietario}
+                onChange={(value) => updateFormData("fotoProprietario", value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Dados do Veículo + Informações Operacionais + Documentos */}
         <Card className="shadow-card">
           <CardHeader>
